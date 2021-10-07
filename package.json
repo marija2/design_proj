@@ -1,0 +1,23 @@
+{
+  "name": "proj",
+  "version": "1.0.0",
+  "description": "design proj",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marija2/design_proj.git"
+  },
+  "author": "Marija Trifkovic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marija2/design_proj/issues"
+  },
+  "homepage": "https://github.com/marija2/design_proj#readme",
+  "dependencies": {
+    "pg": "^8.7.1"
+  }
+}
