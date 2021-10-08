@@ -2,10 +2,10 @@
   "name": "proj",
   "version": "1.0.0",
   "description": "design proj",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/marija2/design_proj#readme",
   "dependencies": {
-    "pg": "^8.7.1"
+    "express": "^4.17.1",
+    "pg": "^8.7.1",
+    "socket.io": "^4.2.0"
   }
 }
