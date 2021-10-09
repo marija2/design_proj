@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/marija2/design_proj#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "pg": "^8.7.1",
     "socket.io": "^4.2.0"

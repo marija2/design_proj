@@ -1,43 +1,38 @@
-var pg = require('pg')
-console.log("in server.js")
+// var pg = require('pg')
+
+// var connectionString = "postgres://newuser:password@localhost:5432/postgres";
+
+// var pgClient = new pg.Client(connectionString);
+
+// pgClient.connect();
+
 var express = require('express')
+
+const bodyParser = require("body-parser")
 
 var app = express()
 var port = process.env.PORT || 3001
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
 
-var server = app.listen(port)
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
-// app.use(express.static('client'))
+app.post("/login", (req, res) => {
+  // sql = 'SELECT FROM test WHERE username= AND password= RETURNING *'
 
-// var socket = require('socket.io')
+  //   const values = ['test_user']
+  
+  //   // callback
+  //   pgClient.query(text, values, (err, res) => {
+  //       if (err) {
+  //         console.log(err.stack)
+  //       } else {
+  //         console.log(res.rows[0])
+  //       }
+  //     })
+  console.log(req.body)
 
-// var io = socket(server)
+  res.json({success: true})
+})
 
-// io.sockets.on('connection', newConnection)
-
-// function newConnection(socket) {
-//   console.log("new conn")
-
-//   var connectionString = "postgres://newuser:password@localhost:5432/postgres";
-
-//   var pgClient = new pg.Client(connectionString);
-
-//   pgClient.connect();
-
-//   const text = 'INSERT INTO test(name) VALUES($1) RETURNING *'
-
-//   const values = ['test_user']
-
-//   // callback
-//   pgClient.query(text, values, (err, res) => {
-//       if (err) {
-//         console.log(err.stack)
-//       } else {
-//         console.log(res.rows[0])
-//       }
-//     })
-// }
+app.listen(port)
