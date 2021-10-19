@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Logout } from './components';
 import { Login } from './components';
 import { Home } from './components';
+import { Profile } from './components';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/logout" exact component={() => <Logout />} />
           <Route path="/" exact component={() => <Home />} />
           <Route path="/login" exact component={() => <Login />} />
+          <Route path="/profile" exact component={() => <Profile />} />
         </Switch>
       </Router>
       </header>

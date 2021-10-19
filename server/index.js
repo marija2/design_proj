@@ -73,6 +73,17 @@ app.post('/session', (req, res) => {
 //   }
 // });
 
+app.post('/profile', (req, res) => {
+  // get which profile we need the data for
+  // return the data
+})
+
+app.post('/editProfile', (req, res) => {
+  // get which profile we are modifying the data for and new data
+  // push data to database
+  // return data to client
+})
+
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
       if(err) {
