@@ -1,8 +1,8 @@
-// var pg = require('pg')
-// var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
+var pg = require('pg')
+var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
 
-// var pgClient = new pg.Client(connectionString);
-// pgClient.connect();
+var pgClient = new pg.Client(connectionString);
+pgClient.connect();
 
 var express = require('express')
 var session = require('express-session')
@@ -47,8 +47,36 @@ app.use(bodyParser.json())
 // })
 
 app.post('/login',(req,res) => {
-  req.session.username = req.body.username;
-  res.json({success: true})
+  // check if user with this email and password exists
+  text = 'SELECT * FROM student WHERE email = $1 AND password = $2'
+  values = [req.body.email, req.body.password]
+
+  console.log(req.session)
+  console.log(req.session.username)
+  console.log(req.session.some)
+
+  pgClient.query(text, values, (err, res_from_db) => {
+    if (err) {
+      console.log(err.stack)
+    } else {
+      if (res_from_db.rows.length == 1) {
+        req.session.username = req.body.email;
+        req.session.some = "some"
+
+        // return res to client
+        res.json({
+          success: true,
+          result: res_from_db.rows[0]
+        })
+      } else {
+        res.json({
+          success: false
+        })
+      }
+    }
+  }) 
+  
+  // res.json({success: true})
 });
 
 app.get('/',(req,res) => {
@@ -60,6 +88,11 @@ app.get('/',(req,res) => {
 });
 
 app.post('/session', (req, res) => {
+
+  console.log(req.session)
+  console.log(req.session.username)
+  console.log(req.session.some)
+
   if (req.session.username) res.json({ success: true })
   else res.json({ success: false })
 })

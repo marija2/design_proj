@@ -12,18 +12,31 @@ class Login extends React.Component{
       super(props)
       this.state = { redirect: false }
       this.handleSubmit = this.handleSubmit.bind(this);
+
+      // if user is logged in and trying to log in, redirect to home page
+      postRequest('/session', {}
+        ).then(data => {
+            if (data.success === true) {
+              this.state = { redirect: "/" }
+            }
+        })
     }
   
     handleSubmit(e) {
       e.preventDefault();
   
       postRequest('/login', {
-        username: e.target.username.value,
+        email: e.target.email.value,
         password: e.target.password.value }
       ).then(data => {
         console.log(data)
         if (data.success === true) {
+          // will be changed to home page, just need to create profile page first
           this.setState({ redirect: "/profile" });
+        } else {
+          e.target.email.value = ""
+          e.target.password.value = ""
+          // add what happens if incorrect email/password
         }
       })
     }
@@ -37,8 +50,8 @@ class Login extends React.Component{
           <Row class="p-3">
             <InputGroup>
               <FormControl
-                placeholder="Username"
-                name="username">
+                placeholder="Email"
+                name="email">
                 </FormControl>
             </InputGroup>
           </Row>

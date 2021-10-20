@@ -12,6 +12,8 @@ class Profile extends React.Component{
       super(props)
       this.state = { redirect: false }
       this.handleSubmit = this.handleSubmit.bind(this);
+      console.log("in profile")
+
     }
   
     handleSubmit(e) {

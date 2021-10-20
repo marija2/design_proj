@@ -12,14 +12,9 @@ class Home extends React.Component {
 
         postRequest('/session', {}
         ).then(data => {
-            console.log(data)
+            // console.log(session)
             if (data.success === false) {
-                this.setState({ redirect: "/login"});
-            }
-            else {
-                this.setState({
-                    name: "Marija"
-                })
+                this.state = { redirect: "/login" }
             }
         })
     }

@@ -47,7 +47,7 @@ Assuming you have installed Postgres:
 brew services start postgres
 ```
 
-### To stop postgres:
+#### To stop postgres:
 
 ```
 brew services stop postgres
