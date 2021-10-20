@@ -26,21 +26,14 @@ class Login extends React.Component{
     handleSubmit(e) {
       e.preventDefault();
   
-      postRequest('/login', {
+      postRequest('/admin/login', {
         email: e.target.email.value,
         password: e.target.password.value }
       ).then(data => {
         console.log(data)
         if (data.success === true) {
-          path = generatePath("/profile/:email/:first_name/:last_name/:preferred_name/:pronouns/:university/:academic_year/:major", {
-            email: data.result.email,
-            first_name: data.result.first_name,
-            last_name: data.result.last_name,
-            preferred_name: data.result.preferred_name,
-            pronouns: data.result.pronouns,
-            university: data.result.university,
-            academic_year: data.result.academic_year,
-            major: data.result.major
+          path = generatePath("/admin/profile/:email", {
+            email: data.result.email
           })
           // will be changed to home page, just need to create profile page first
           this.setState({ redirect: path });
@@ -54,9 +47,10 @@ class Login extends React.Component{
   
     render (){
       if (this.state.redirect) {
-        return <Redirect to={this.state.redirect}/>
+        return <Redirect to={this.state.redirect} />
       }
       return (<form onSubmit={this.handleSubmit}>
+        Admin login
         <Container>
           <Row class="p-3">
             <InputGroup>

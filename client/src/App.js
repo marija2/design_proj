@@ -17,7 +17,8 @@ function App() {
           <Route path="/logout" exact component={() => <Logout />} />
           <Route path="/" exact component={() => <Home />} />
           <Route path="/login" exact component={() => <Login />} />
-          <Route path="/profile" exact component={() => <Profile />} />
+          <Route path="/profile/:email/:first_name/:last_name/:preferred_name/:pronouns/:university/:academic_year/:major" exact component={(e) => <Profile data={e.match.params}/>} />
+          <Route path="/admin/login" exact component={() => <AdminLogin />} />
         </Switch>
       </Router>
       </header>
