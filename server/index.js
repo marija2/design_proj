@@ -45,7 +45,38 @@ app.use(bodyParser.json())
 //         }
 //       })  
 // })
+app.post('/addStudent', (req, res) => {
+  text = 'INSERT INTO student (email, password, first_name, last_name, university, academic_year, major) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *'
+  values = [
+    req.body.email,
+    req.body.password,
+    req.body.first_name,
+    req.body.last_name,
+    req.body.university,
+    req.body.academic_year,
+    req.body.major
+  ]
 
+  pgClient.query(text, values, (err, res_from_db) => {
+    if (err) {
+      console.log(err.stack)
+      res.json({
+        success: false
+      })
+    } else {
+      if (res_from_db.rows.length == 1) {
+        res.json({
+          success: true,
+          result: res_from_db.rows[0]
+        })
+      } else {
+        res.json({
+          success: false
+        })
+      }
+    }
+  }) 
+});
 app.post('/admin/login',(req,res) => {
   // check if user with this email and password exists
   text = 'SELECT * FROM admin WHERE email = $1 AND password = $2'
@@ -139,7 +170,7 @@ app.post('/editProfile', (req, res) => {
   // get which profile we are modifying the data for and new data
   // push data to database
   // return data to client
-  text = 'UPDATE students SET first_name = $1, last_name = $2, preferred_name = $3, pronouns = $4, university = $5, academic_year = $6, major = $7 WHERE email = $8 RETURNING *'
+  text = 'UPDATE student SET first_name = $1, last_name = $2, preferred_name = $3, pronouns = $4, university = $5, academic_year = $6, major = $7 WHERE email = $8 RETURNING *'
   values = [
     req.body.first_name,
     req.body.last_name,
@@ -188,6 +219,28 @@ app.post('/admin/logout', (req, res) => {
       }
       res.json({success: true})
   });
+});
+
+app.post('/createTable', (req, res) => {
+  text = 'INSERT INTO admin (email, password) VALUES ($1, $2) RETURNING *'
+  values = ['mt3786@nyu.edu', 'password']
+
+  pgClient.query(text, values, (err, res_from_db) => {
+    if (err) {
+      console.log(err.stack)
+    } else {
+      if (res_from_db.rows.length == 1) {
+        res.json({
+          success: true,
+          result: res_from_db.rows[0]
+        })
+      } else {
+        res.json({
+          success: false
+        })
+      }
+    }
+  }) 
 });
 
 app.listen(port)

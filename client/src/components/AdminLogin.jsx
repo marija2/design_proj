@@ -8,11 +8,12 @@ import { Redirect } from "react-router-dom";
 import postRequest from "./PostRequest"
 import { generatePath } from "react-router";
 
-class Login extends React.Component{
+class AdminLogin extends React.Component{
     constructor(props) {
       super(props)
       this.state = { redirect: false }
       this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleCreateTable = this.handleCreateTable.bind(this);
 
       // if user is logged in and trying to log in, redirect to home page
       postRequest('/session', {}
@@ -32,7 +33,7 @@ class Login extends React.Component{
       ).then(data => {
         console.log(data)
         if (data.success === true) {
-          path = generatePath("/admin/profile/:email", {
+          var path = generatePath("/admin/profile/:email", {
             email: data.result.email
           })
           // will be changed to home page, just need to create profile page first
@@ -42,6 +43,14 @@ class Login extends React.Component{
           e.target.password.value = ""
           // add what happens if incorrect email/password
         }
+      })
+    }
+
+    handleCreateTable(e) {
+  
+      postRequest('/createTable', { email : "email" }
+      ).then(data => {
+        console.log(data)
       })
     }
   
@@ -75,4 +84,4 @@ class Login extends React.Component{
     }
   }
 
-  export default Login;
+  export default AdminLogin;

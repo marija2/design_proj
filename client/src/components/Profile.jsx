@@ -12,7 +12,7 @@ class Profile extends React.Component{
       super(props)
       this.state = {
         redirect: false,
-        editting: false
+        edit: false
       }
       this.handleSubmit = this.handleSubmit.bind(this);
       console.log("in profile")
@@ -56,7 +56,7 @@ class Profile extends React.Component{
             university: data.result.university,
             academic_year: data.result.academic_year,
             major: data.result.major,
-            editting: false
+            edit: false
           });
         }
       })
@@ -66,7 +66,7 @@ class Profile extends React.Component{
     // the edit button will be in renderProfile()
     handleEditButtonClicked() {
       this.setState({
-        editting: true
+        edit: true
       })
     }
 
@@ -89,7 +89,7 @@ class Profile extends React.Component{
     }
   
     render (){
-      if (this.states.editting == true) {
+      if (this.state.edit === true) {
           return this.renderProfileEditMode()
       } else {
         return this.renderProfile()

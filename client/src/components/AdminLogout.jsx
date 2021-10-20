@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import { Redirect } from "react-router-dom";
 import postRequest from "./PostRequest"
 
-class Logout extends React.Component{
+class AdminLogout extends React.Component{
 
   constructor(props) {
     super(props)
@@ -34,4 +34,4 @@ class Logout extends React.Component{
   }
 }
 
-export default Logout;
+export default AdminLogout;
