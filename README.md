@@ -1,11 +1,3 @@
-### To start postgres:
-
-
-
-### To start redis:
-
-
-
 ### To start server:
 
 1. Open **new** terminal window and go to the project directory
@@ -24,7 +16,7 @@ If the server was started successfully you should see a similar message:
 
 ### To start client:
 
-1. Open new terminal window and go to the project directory
+1. Open **new** terminal window and go to the project directory
 2. Add the following line to the terminal and press enter:
 
 ```
@@ -34,7 +26,17 @@ cd client
 ```
 npm start
 ```
+If the client was started successfully you should see a similar message:
+
+![Client started](images/client_started.png)
 
 #### To stop client:
 
 1. In the same terminal where the client is running press `command` + `C`
+
+### To start postgres:
+
+
+
+### To start redis:
+
