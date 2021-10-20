@@ -36,7 +36,31 @@ If the client was started successfully you should see a similar message:
 
 ### To start postgres:
 
+[Setting up a PostgreSQL Database on Mac](https://www.sqlshack.com/setting-up-a-postgresql-database-on-mac/)
 
+Assuming you have installed Postgres:
+
+1. Open **new** terminal window
+2. Add the following line to the terminal and press enter:
+
+```
+brew services start postgres
+```
+
+### To stop postgres:
+
+```
+brew services stop postgres
+```
 
 ### To start redis:
 
+[Session Management in Node.js Using Redis as Session Store](https://codeforgeek.com/using-redis-to-handle-session-in-node-js/#installation)
+
+Assuming you have installed Redis:
+
+1. Open **new** terminal window
+2. Add the following line to the terminal and press enter:
+```
+redis-server &
+```
