@@ -1,7 +1,7 @@
 import React from "react";
-// import Button from 'react-bootstrap/Button';
-// import InputGroup from 'react-bootstrap/InputGroup';
-// import FormControl from 'react-bootstrap/FormControl';
+import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
 // import Container from 'react-bootstrap/Container';
 // import Row from 'react-bootstrap/Row';
 // import { Redirect } from "react-router-dom";
@@ -10,33 +10,44 @@ import postRequest from "./PostRequest"
 class Profile extends React.Component{
     constructor(props) {
       super(props)
+
       this.state = {
         redirect: false,
-        edit: false
+        edit: false,
+        email: props.data.email
       }
+
       this.handleSubmit = this.handleSubmit.bind(this);
-      console.log("in profile")
-      console.log(props.data)
-      // will get this info from the login page
-      // need to get info from db if not comping to this page from login page
-      this.state = {
-        email: props.data.email,
-        first_name: props.data.first_name,
-        last_name: props.data.last_name,
-        preferred_name: props.data.preferred_name,
-        pronouns: props.data.pronouns,
-        university: props.data.university,
-        academic_year: props.data.academic_year,
-        major: props.data.major
-      }
+      this.handleEditButtonClicked = this.handleEditButtonClicked.bind(this);
+      // need to get info from db
+      postRequest('/profile', {
+        email: props.data.email
+      }).then(data => {
+        console.log(data)
+
+        if (data.success === true) {
+          this.setState({
+            first_name: data.result.first_name,
+            last_name: data.result.last_name,
+            preferred_name: data.result.prefered_name || "",
+            pronouns: data.result.pronouns || "",
+            university: data.result.university,
+            academic_year: data.result.academic_year,
+            major: data.result.major,
+            friends: data.friends,
+            editable: data.editable // will be editable if you are looking at your own profile
+          });
+        }
+      })
     }
   
     // should call this methos when a form with new info is submitted
     handleSubmit(e) {
       e.preventDefault();
-  
+      console.log("handling")
       postRequest('/editProfile', {
-        email: e.target.email.value,
+        email: this.state.email,
+        // email: e.target.email.value,
         first_name: e.target.first_name.value,
         last_name: e.target.last_name.value,
         preferred_name: e.target.preferred_name.value,
@@ -51,7 +62,7 @@ class Profile extends React.Component{
             email: data.result.email,
             first_name: data.result.first_name,
             last_name: data.result.last_name,
-            preferred_name: data.result.preferred_name,
+            preferred_name: data.result.prefered_name,
             pronouns: data.result.pronouns,
             university: data.result.university,
             academic_year: data.result.academic_year,
@@ -66,24 +77,106 @@ class Profile extends React.Component{
     // the edit button will be in renderProfile()
     handleEditButtonClicked() {
       this.setState({
-        edit: true
+        edit: !this.state.edit
       })
     }
 
     renderProfileEditMode() {
-      // TO DO
       return (
         <div>
-        the html for the profile page will be here with an edit form
-      </div>
+          <h1> {this.state.first_name} {this.state.last_name}</h1>
+          <form onSubmit={this.handleSubmit}>
+          <InputGroup>
+              <FormControl
+                placeholder="First Name"
+                name="first_name"
+                defaultValue={this.state.first_name}>
+              </FormControl>
+            </InputGroup>
+            <InputGroup>
+              <FormControl
+                placeholder="Last Name"
+                name="last_name"
+                defaultValue={this.state.last_name}>
+              </FormControl>
+            </InputGroup>
+            <InputGroup>
+              <FormControl
+                placeholder="Preferred Name"
+                name="preferred_name"
+                defaultValue={this.state.preferred_name}>
+              </FormControl>
+            </InputGroup>
+            <InputGroup>
+              <FormControl
+                placeholder="Pronouns"
+                name="pronouns"
+                defaultValue={this.state.pronouns}>
+              </FormControl>
+            </InputGroup>
+            <InputGroup>
+              <FormControl
+                placeholder="University"
+                name="university"
+                defaultValue={this.state.university}>
+              </FormControl>
+            </InputGroup>
+            <InputGroup>
+              <FormControl
+                placeholder="Academic year"
+                name="academic_year"
+                defaultValue={this.state.academic_year}>
+              </FormControl>
+            </InputGroup>
+            <InputGroup>
+              <FormControl
+                placeholder="Major"
+                name="major"
+                defaultValue={this.state.major}>
+              </FormControl>
+            </InputGroup>
+            <Button type="submit" > Save changes </Button>
+            <Button type="button" onClick={this.handleEditButtonClicked}> Cancel </Button>
+          </form>
+        </div>
       )
     }
 
+    getPrefferedName() {
+      if (this.state.preferred_name !== "") {
+        return (<h5> Preferred name: {this.state.preferred_name} </h5>)
+      }
+    }
+
+    getPronouns() {
+      if (this.state.pronouns !== "") {
+        return (<h5> Pronouns: {this.state.pronouns} </h5>)
+      }
+    }
+
+    getFriends() {
+      return (
+        <h5> Friends </h5>
+      )
+    }
+
+    renderEditBtn() {
+      if (this.state.editable) {
+        return (<Button onClick={this.handleEditButtonClicked}>Edit profile</Button>)
+      }
+    }
+
     renderProfile() {
-      // TO DO
       return (
         <div>
-        the html for the profile page will be here
+          <h1> {this.state.first_name} {this.state.last_name}</h1>
+          {this.getPrefferedName()}
+          {this.getPronouns()}
+          <h5> {this.state.university} </h5>
+          <h5> {this.state.academic_year} </h5>
+          <h5> {this.state.major} </h5>
+          {this.renderEditBtn()}
+          {this.getFriends()}
       </div>
       )
     }

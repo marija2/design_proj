@@ -77,6 +77,7 @@ app.post('/addStudent', (req, res) => {
     }
   }) 
 });
+
 app.post('/admin/login',(req,res) => {
   // check if user with this email and password exists
   text = 'SELECT * FROM admin WHERE email = $1 AND password = $2'
@@ -108,7 +109,7 @@ app.post('/admin/login',(req,res) => {
 
 app.post('/login',(req,res) => {
   // check if user with this email and password exists
-  text = 'SELECT * FROM student WHERE email = $1 AND password = $2'
+  text = 'SELECT email FROM student WHERE email = $1 AND password = $2'
   values = [req.body.email, req.body.password]
 
   console.log(req.session)
@@ -121,7 +122,6 @@ app.post('/login',(req,res) => {
       if (res_from_db.rows.length == 1) {
         req.session.username = req.body.email;
 
-        // return res to client
         res.json({
           success: true,
           result: res_from_db.rows[0]
@@ -162,20 +162,56 @@ app.post('/session', (req, res) => {
 // });
 
 app.post('/profile', (req, res) => {
-  // get which profile we need the data for
-  // return the data
+   text = 'SELECT * FROM student WHERE email = $1'
+   values = [req.body.email]
+ 
+   pgClient.query(text, values, (err, res_from_db) => {
+     if (err) {
+       console.log(err.stack)
+     } else {
+       if (res_from_db.rows.length == 1) {
+         editable = false;
+  
+         if (req.session.username == res_from_db.rows[0].email) {
+            editable = true;
+         }
+
+         text = 'SELECT * FROM friends WHERE friend1 = $1 OR friend2 = $1'
+         values = [res_from_db.rows[0].id]
+ 
+         // find that student's friends
+         pgClient.query(text, values, (err, friend_list) => {
+           if (err) {
+             console.log(err.stack)
+           } else {
+             // return res to client
+             res.json({
+               success: true,
+               result: res_from_db.rows[0],
+               friends: friend_list.rows,
+               editable: editable
+             })
+           }
+         })
+       } else {
+         res.json({
+           success: false
+         })
+       }
+     }
+   }) 
 })
 
 app.post('/editProfile', (req, res) => {
   // get which profile we are modifying the data for and new data
   // push data to database
   // return data to client
-  text = 'UPDATE student SET first_name = $1, last_name = $2, preferred_name = $3, pronouns = $4, university = $5, academic_year = $6, major = $7 WHERE email = $8 RETURNING *'
+  text = 'UPDATE student SET first_name = $1, last_name = $2, prefered_name = $3, pronouns = $4, university = $5, academic_year = $6, major = $7 WHERE email = $8 RETURNING *'
   values = [
     req.body.first_name,
     req.body.last_name,
     req.body.preferred_name,
-    req.body.prononuns,
+    req.body.pronouns,
     req.body.university,
     req.body.academic_year,
     req.body.major,

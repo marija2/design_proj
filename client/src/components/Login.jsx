@@ -11,6 +11,7 @@ import { generatePath } from "react-router";
 class Login extends React.Component{
     constructor(props) {
       super(props)
+
       this.state = { redirect: false }
       this.handleSubmit = this.handleSubmit.bind(this);
 
@@ -32,16 +33,7 @@ class Login extends React.Component{
       ).then(data => {
         console.log(data)
         if (data.success === true) {
-          var path = generatePath("/profile/:email/:first_name/:last_name/:preferred_name/:pronouns/:university/:academic_year/:major", {
-            email: data.result.email || "Not provided",
-            first_name: data.result.first_name || "Not provided",
-            last_name: data.result.last_name || "Not provided",
-            preferred_name: data.result.prefered_name || "Not provided",
-            pronouns: data.result.pronouns || "Not provided",
-            university: data.result.university || "Not provided",
-            academic_year: data.result.academic_year || "Not provided",
-            major: data.result.major || "Not provided"
-          })
+          var path = generatePath("/profile/:email", { email: data.result.email })
           // will be changed to home page, just need to create profile page first
           this.setState({ redirect: path });
         } else {
