@@ -20,7 +20,7 @@ function App() {
           <Route path="/logout" exact component={() => <Logout />} />
           <Route path="/" exact component={() => <Home />} />
           <Route path="/login" exact component={() => <Login />} />
-          <Route path="/profile/:email" exact component={(e) => <Profile data={e.match.params}/>} />
+          <Route path="/profile/:username" exact component={(e) => <Profile data={e.match.params}/>} />
           <Route path="/admin/login" exact component={() => <AdminLogin />} />
           <Route path="/admin/logout" exact component={() => <AdminLogout />} />
           <Route path="/admin/profile/:email" exact component={(e) => <AdminProfile data={e.match.params}/>} />

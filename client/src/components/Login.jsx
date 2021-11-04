@@ -33,7 +33,7 @@ class Login extends React.Component{
       ).then(data => {
         console.log(data)
         if (data.success === true) {
-          var path = generatePath("/profile/:email", { email: data.result.email })
+          var path = generatePath("/profile/:username", { username: data.result.username })
           // will be changed to home page, just need to create profile page first
           this.setState({ redirect: path });
         } else {
@@ -53,7 +53,7 @@ class Login extends React.Component{
           <Row class="p-3">
             <InputGroup>
               <FormControl
-                placeholder="Email"
+                placeholder="Email or Username"
                 name="email">
                 </FormControl>
             </InputGroup>
@@ -62,7 +62,8 @@ class Login extends React.Component{
             <InputGroup>
               <FormControl
                 placeholder="Password"
-                name="password">
+                name="password"
+                type="password">
               </FormControl>
             </InputGroup>
           </Row>

@@ -14,14 +14,15 @@ class Profile extends React.Component{
       this.state = {
         redirect: false,
         edit: false,
-        email: props.data.email
+        username: props.data.username
       }
 
       this.handleSubmit = this.handleSubmit.bind(this);
       this.handleEditButtonClicked = this.handleEditButtonClicked.bind(this);
+
       // need to get info from db
       postRequest('/profile', {
-        email: props.data.email
+        username: props.data.username
       }).then(data => {
         console.log(data)
 
@@ -29,7 +30,8 @@ class Profile extends React.Component{
           this.setState({
             first_name: data.result.first_name,
             last_name: data.result.last_name,
-            preferred_name: data.result.prefered_name || "",
+            email: data.result.email,
+            preferred_name: data.result.preferred_name || "",
             pronouns: data.result.pronouns || "",
             university: data.result.university,
             academic_year: data.result.academic_year,
@@ -44,10 +46,10 @@ class Profile extends React.Component{
     // should call this methos when a form with new info is submitted
     handleSubmit(e) {
       e.preventDefault();
-      console.log("handling")
+
       postRequest('/editProfile', {
-        email: this.state.email,
-        // email: e.target.email.value,
+        username: this.state.username,
+        email: e.target.email.value,
         first_name: e.target.first_name.value,
         last_name: e.target.last_name.value,
         preferred_name: e.target.preferred_name.value,
@@ -62,7 +64,7 @@ class Profile extends React.Component{
             email: data.result.email,
             first_name: data.result.first_name,
             last_name: data.result.last_name,
-            preferred_name: data.result.prefered_name,
+            preferred_name: data.result.preferred_name,
             pronouns: data.result.pronouns,
             university: data.result.university,
             academic_year: data.result.academic_year,
@@ -76,9 +78,7 @@ class Profile extends React.Component{
     // call this method when the edit button is clicked
     // the edit button will be in renderProfile()
     handleEditButtonClicked() {
-      this.setState({
-        edit: !this.state.edit
-      })
+      this.setState({ edit: !this.state.edit })
     }
 
     renderProfileEditMode() {
@@ -112,6 +112,13 @@ class Profile extends React.Component{
                 placeholder="Pronouns"
                 name="pronouns"
                 defaultValue={this.state.pronouns}>
+              </FormControl>
+            </InputGroup>
+            <InputGroup>
+              <FormControl
+                placeholder="Email"
+                name="email"
+                defaultValue={this.state.email}>
               </FormControl>
             </InputGroup>
             <InputGroup>
@@ -154,9 +161,19 @@ class Profile extends React.Component{
       }
     }
 
+    getFriend(friend) {
+      console.log(friend.first_name)
+      return ( <div><h6> {friend.first_name} {friend.last_name} {friend.username}</h6></div>)
+    }
+
     getFriends() {
+      let result = [<h5> Friends </h5>]
+      if (!this.state.friends) return
+      for (var i = 0; i < this.state.friends.length; i++) {
+        result[i + 1] = this.getFriend(this.state.friends[i])
+      }
       return (
-        <h5> Friends </h5>
+        <div>{result}</div>
       )
     }
 
@@ -172,6 +189,8 @@ class Profile extends React.Component{
           <h1> {this.state.first_name} {this.state.last_name}</h1>
           {this.getPrefferedName()}
           {this.getPronouns()}
+          <h5> {this.state.username} </h5>
+          <h5> {this.state.email} </h5>
           <h5> {this.state.university} </h5>
           <h5> {this.state.academic_year} </h5>
           <h5> {this.state.major} </h5>
@@ -182,11 +201,8 @@ class Profile extends React.Component{
     }
   
     render (){
-      if (this.state.edit === true) {
-          return this.renderProfileEditMode()
-      } else {
-        return this.renderProfile()
-      }
+      if (this.state.edit === true) { return this.renderProfileEditMode() }
+      else { return this.renderProfile() }
     }
   }
 

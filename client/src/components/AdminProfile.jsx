@@ -10,13 +10,9 @@ import postRequest from "./PostRequest"
 class AdminProfile extends React.Component{
     constructor(props) {
       super(props)
-      this.state = {
-        redirect: false
-      }
+      this.state = { redirect: false }
       this.handleSubmit = this.handleSubmit.bind(this);
-      this.state = {
-        email: props.data.email
-      }
+      this.state = { email: props.data.email }
     }
   
     // should call this methos when a form with new info is submitted
@@ -30,13 +26,12 @@ class AdminProfile extends React.Component{
         last_name: e.target.last_name.value,
         university: e.target.university.value,
         academic_year: e.target.academic_year.value,
-        major: e.target.major.value
+        major: e.target.major.value,
+        username: e.target.username.values
       }).then(data => {
         console.log(data)
         if (data.success === true) {
-          this.setState({
-            rerender: true
-          });
+          this.setState({ rerender: true });
         }
       })
     }
@@ -51,6 +46,14 @@ class AdminProfile extends React.Component{
                 <FormControl
                     placeholder="Student Email"
                     name="student_email">
+                    </FormControl>
+                </InputGroup>
+            </Row>
+            <Row class="p-3">
+                <InputGroup>
+                <FormControl
+                    placeholder="Student Username"
+                    name="username">
                     </FormControl>
                 </InputGroup>
             </Row>
