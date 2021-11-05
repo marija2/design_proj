@@ -1,22 +1,18 @@
 var pg = require('pg')
 var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
-
 var pgClient = new pg.Client(connectionString);
 pgClient.connect();
-
 var express = require('express')
 var session = require('express-session')
 const redis = require('redis');
 const redisStore = require('connect-redis')(session);
 const client  = redis.createClient();
 const bodyParser = require("body-parser")
-
 var app = express()
 var port = process.env.PORT || 3001
 
 app.use(session({
   secret: 'ssshhhhh',
-  // create new redis store.
   store: new redisStore({ host: '127.0.0.1', port: 3001, client: client,ttl : 260}),
   saveUninitialized: false,
   resave: false
@@ -42,14 +38,9 @@ app.post('/addStudent', (req, res) => {
     if (err) {
       console.log(err.stack)
       res.json({ success: false })
-
     } else {
       if (res_from_db.rows.length == 1) {
-        res.json({
-          success: true,
-          result: res_from_db.rows[0]
-        })
-
+        res.json({ success: true, result: res_from_db.rows[0] })
       } else { res.json({ success: false }) }
     }
   }) 
@@ -66,20 +57,12 @@ app.post('/admin/login',(req,res) => {
   pgClient.query(text, values, (err, res_from_db) => {
     if (err) {
       console.log(err.stack)
+      res.json({ success: false })
     } else {
       if (res_from_db.rows.length == 1) {
         req.session.username = req.body.email;
-
-        // return res to client
-        res.json({
-          success: true,
-          result: res_from_db.rows[0]
-        })
-      } else {
-        res.json({
-          success: false
-        })
-      }
+        res.json({ success: true, result: res_from_db.rows[0] })
+      } else { res.json({success: false }) }
     }
   }) 
 });
@@ -95,32 +78,25 @@ app.post('/login',(req,res) => {
   pgClient.query(text, values, (err, student) => {
     if (err) {
       console.log(err.stack)
+      res.json({ success: false })
     } else {
       if (student.rows.length == 1) {
         req.session.username = student.rows[0].username;
-
-        res.json({
-          success: true,
-          result: student.rows[0]
-        })
+        res.json({ success: true, result: student.rows[0] })
       } else { res.json({ success: false }) }
     }
   }) 
 });
 
 app.get('/',(req,res) => {
-  let sess = req.session;
-  
-  if(sess.username) { return res.json({ success: true }); }
-
-  res.json({ success: false });
+  let sess = req.session
+  if(sess.username) res.json({ success: true })
+  else res.json({ success: false })
 });
 
 app.post('/session', (req, res) => {
-
   console.log(req.session)
   console.log(req.session.username)
-
   if (req.session.username) res.json({ success: true })
   else res.json({ success: false })
 })
@@ -130,59 +106,139 @@ app.post('/profile', (req, res) => {
    values = [req.body.username]
  
    pgClient.query(text, values, (err, student) => {
-     if (err) {
-       console.log(err.stack)
-     } else {
-       if (student.rows.length == 1) {
-         editable = false;
-  
-         if (req.session.username == student.rows[0].username) {
-            editable = true;
-         }
+      if (err) { console.log(err.stack) }
+      if (err || student.rows.length != 1) {
+        res.json({ success: false })
+        return
+      }
 
-         text = 'SELECT * FROM friends WHERE friend1 = $1 OR friend2 = $1'
-         values = [student.rows[0].id]
- 
-         // find that student's friends
-         pgClient.query(text, values, (err, friend_list) => {
-           if (err) {
-             console.log(err.stack)
-           } else {
+      editable = false;
+      if (req.session.username == student.rows[0].username) { editable = true; }
 
-            text = 'SELECT first_name, last_name, username FROM student WHERE'
-            values = []
+      text = 'SELECT * FROM friends WHERE friend1 = $1 OR friend2 = $1'
+      values = [student.rows[0].id]
 
-            // get each friend's first, last name, and email
-            for (var i = 0; i < friend_list.rows.length; i++) {
-              friend_id = friend_list.rows[i].friend1
+      // find that student's friends
+      pgClient.query(text, values, (err, friend_list) => {
+        if (err) {
+          console.log(err.stack)
+          res.json({ success: false })
+          return
+        }
 
-              if (friend_id == student.rows[0].id) {
-                friend_id = friend_list.rows[i].friend2
-              }
+        text = 'SELECT first_name, last_name, username FROM student WHERE'
+        values = []
 
-              text += ' id = $' + (i + 1).toString()
-              if (i != friend_list.rows.length - 1) text += ' OR'
-              values[i] = friend_id
+        // get each friend's first, last name, and email
+        for (var i = 0; i < friend_list.rows.length; i++) {
+          friend_id = friend_list.rows[i].friend1
+          if (friend_id == student.rows[0].id) { friend_id = friend_list.rows[i].friend2 }
+
+          text += ' id = $' + (i + 1).toString()
+          if (i != friend_list.rows.length - 1) text += ' OR'
+          values[i] = friend_id
+        }
+
+        if (values.length != 0) {
+          pgClient.query(text, values, (err, friends) => {
+            if (err) {
+              console.log(err.stack)
+              res.json({ success: false })
+              return
             }
+            // get that student's sections
+            text = 'SELECT section_id FROM section_student WHERE student_id = $1'
+            values = [student.rows[0].id]
 
-            pgClient.query(text, values, (err, friends) => {
+            pgClient.query(text, values, (err, section_list) => {
               if (err) {
                 console.log(err.stack)
+                res.json({ success: false })
+                return
+              }
+              text = 'SELECT * FROM sections WHERE'
+              values = []
+
+              // get each friend's first, last name, and email
+              for (var i = 0; i < section_list.rows.length; i++) {
+                text += ' id = $' + (i + 1).toString()
+                if (i != section_list.rows.length - 1) text += ' OR'
+                values[i] = section_list.rows[i].section_id
+              }
+
+              if (values.length != 0) {
+                pgClient.query(text, values, (err, sections) => {
+                  if (err) {
+                    console.log(err.stack)
+                    res.json({ success: false })
+                    return
+                  }
+                  res.json({
+                    success: true,
+                    result: student.rows[0],
+                    friends: friends.rows,
+                    sections: sections.rows,
+                    editable: editable
+                  })
+                })
               } else {
-                console.log(friends.rows)
-                // return res to client
                 res.json({
                   success: true,
                   result: student.rows[0],
                   friends: friends.rows,
+                  sections: [],
                   editable: editable
                 })
               }
             })
-           }
-         })
-       } else { res.json({ success: false }) }
-     }
+          })
+        } else {
+          // get that student's sections
+          text = 'SELECT section_id FROM section_student WHERE student_id = $1'
+          values = [student.rows[0].id]
+
+          pgClient.query(text, values, (err, section_list) => {
+            if (err) {
+              console.log(err.stack)
+              res.json({ success: false })
+              return
+            }
+            text = 'SELECT * FROM sections WHERE'
+            values = []
+
+            for (var i = 0; i < section_list.rows.length; i++) {
+              text += ' id = $' + (i + 1).toString()
+              if (i != section_list.rows.length - 1) text += ' OR'
+              values[i] = section_list.rows[i].section_id
+            }
+
+            if (values.length != 0) {
+              pgClient.query(text, values, (err, sections) => {
+                if (err) {
+                  console.log(err.stack)
+                  res.json({ success: false })
+                  return
+                }
+                res.json({
+                  success: true,
+                  result: student.rows[0],
+                  friends: [],
+                  sections: sections.rows,
+                  editable: editable
+                })
+              })
+            } else {
+              res.json({
+                success: true,
+                result: student.rows[0],
+                friends: [],
+                sections: [],
+                editable: editable
+              })
+            }
+          })
+        }
+      })
    }) 
 })
 
@@ -205,58 +261,91 @@ app.post('/editProfile', (req, res) => {
   pgClient.query(text, values, (err, res_from_db) => {
     if (err) {
       console.log(err.stack)
-    } else {
-      if (res_from_db.rows.length == 1) {
-        // return res to client
-        res.json({
-          success: true,
-          result: res_from_db.rows[0]
-        })
-      } else { res.json({ success: false }) }
+      res.json({ success: false })
+      return
     }
+    if (res_from_db.rows.length == 1) {
+      res.json({ success: true, result: res_from_db.rows[0] })
+    } else { res.json({ success: false }) }
   }) 
 })
 
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
-      if(err) {
-        res.json({success: false})
-        return
-      }
-      res.json({success: true})
+      if(err) res.json({success: false})
+      else res.json({success: true})
   });
 });
 
 app.post('/admin/logout', (req, res) => {
   req.session.destroy((err) => {
-      if(err) {
-        res.json({success: false})
-        return
-      }
-      res.json({success: true})
+      if(err) res.json({success: false})
+      else res.json({success: true})
   });
 });
 
-// app.post('/createTable', (req, res) => {
-//   text = 'INSERT INTO admin (email, password) VALUES ($1, $2) RETURNING *'
-//   values = ['mt3786@nyu.edu', 'password']
+app.post('/addSection', (req, res) => {
+  text = 'INSERT INTO sections (section_name, professor, section_time, semester, cohort, code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *'
+  values = [
+    req.body.section_name,
+    req.body.section_prof,
+    req.body.section_time,
+    req.body.section_semester,
+    req.body.section_cohort,
+    req.body.section_code
+  ]
 
-//   pgClient.query(text, values, (err, res_from_db) => {
-//     if (err) {
-//       console.log(err.stack)
-//     } else {
-//       if (res_from_db.rows.length == 1) {
-//         res.json({
-//           success: true,
-//           result: res_from_db.rows[0]
-//         })
-//       } else {
-//         res.json({
-//           success: false
-//         })
-//       }
-//     }
-//   }) 
-// });
+  pgClient.query(text, values, (err, res_from_db) => {
+    if (err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return
+    }
+    if (res_from_db.rows.length == 1) {
+      res.json({ success: true, result: res_from_db.rows[0] })
+    } else { res.json({ success: false }) }
+  }) 
+});
+
+app.post('/addStudentToSection', (req, res) => {
+  text = 'SELECT id FROM student WHERE email = $1 OR username = $1'
+  values = [req.body.student_email]
+
+  pgClient.query(text, values, (err, student) => {
+    if (err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return
+    }
+    if (student.rows.length == 1) {
+      text = 'SELECT id FROM sections WHERE code = $1'
+      values = [req.body.section_code]
+
+      pgClient.query(text, values, (err, section) => {
+        if (err) {
+          console.log(err.stack)
+          res.json({ success: false })
+          return
+        }
+        if (section.rows.length == 1) {
+          text = 'INSERT INTO section_student (section_id, student_id) VALUES ($1, $2) RETURNING *'
+          values = [section.rows[0].id, student.rows[0].id]
+          console.log('here3')
+
+          pgClient.query(text, values, (err, section_student) => {
+            if (err) {
+              console.log(err.stack)
+              res.json({ success: false })
+              return
+            }
+            if (section_student.rows.length == 1) {
+              res.json({ success: true, result: section_student.rows[0] })
+            } else { res.json({ success: false }) }
+          })
+        } else { res.json({ success: false }) }
+      })
+    } else { res.json({ success: false }) }
+  }) 
+});
 
 app.listen(port)

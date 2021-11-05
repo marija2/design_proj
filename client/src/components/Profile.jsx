@@ -37,6 +37,7 @@ class Profile extends React.Component{
             academic_year: data.result.academic_year,
             major: data.result.major,
             friends: data.friends,
+            sections: data.sections,
             editable: data.editable // will be editable if you are looking at your own profile
           });
         }
@@ -162,15 +163,29 @@ class Profile extends React.Component{
     }
 
     getFriend(friend) {
-      console.log(friend.first_name)
       return ( <div><h6> {friend.first_name} {friend.last_name} {friend.username}</h6></div>)
     }
 
     getFriends() {
-      let result = [<h5> Friends </h5>]
       if (!this.state.friends) return
+      let result = [<h5> Friends </h5>]
       for (var i = 0; i < this.state.friends.length; i++) {
         result[i + 1] = this.getFriend(this.state.friends[i])
+      }
+      return (
+        <div>{result}</div>
+      )
+    }
+
+    getSection(section) {
+      return ( <div><h6> {section.section_name} {section.semester} {section.cohort}</h6></div>)
+    }
+
+    getSections() {
+      if (!this.state.sections) return
+      let result = [<h5> Sections </h5>]
+      for (var i = 0; i < this.state.sections.length; i++) {
+        result[i + 1] = this.getSection(this.state.sections[i])
       }
       return (
         <div>{result}</div>
@@ -195,6 +210,7 @@ class Profile extends React.Component{
           <h5> {this.state.academic_year} </h5>
           <h5> {this.state.major} </h5>
           {this.renderEditBtn()}
+          {this.getSections()}
           {this.getFriends()}
       </div>
       )

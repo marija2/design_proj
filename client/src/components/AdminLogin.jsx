@@ -33,9 +33,7 @@ class AdminLogin extends React.Component{
       ).then(data => {
         console.log(data)
         if (data.success === true) {
-          var path = generatePath("/admin/profile/:email", {
-            email: data.result.email
-          })
+          var path = generatePath("/admin/profile/:email", { email: data.result.email })
           // will be changed to home page, just need to create profile page first
           this.setState({ redirect: path });
         } else {
@@ -56,30 +54,25 @@ class AdminLogin extends React.Component{
   
     render (){
       if (this.state.redirect) {
-        return <Redirect to={this.state.redirect} />
+        return <div><Redirect to={this.state.redirect} /></div>
       }
-      return (<form onSubmit={this.handleSubmit}>
-        Admin login
-        <Container>
-          <Row class="p-3">
-            <InputGroup>
-              <FormControl
-                placeholder="Email"
-                name="email">
-                </FormControl>
-            </InputGroup>
-          </Row>
-          <Row class="p-3">
-            <InputGroup>
-              <FormControl
-                placeholder="Password"
-                name="password">
-              </FormControl>
-            </InputGroup>
-          </Row>
-        </Container>
-        <Button type="submit" > Sign in</Button>
-      </form>
+      return ( <div><form onSubmit={this.handleSubmit}>
+          Admin login
+          <Container>
+            <Row className="p-1">
+              <InputGroup>
+                <FormControl placeholder="Email" name="email"></FormControl>
+              </InputGroup>
+            </Row>
+            <Row className="p-1">
+              <InputGroup>
+                <FormControl placeholder="Password" name="password"></FormControl>
+              </InputGroup>
+            </Row>
+          </Container>
+          <Button type="submit" > Sign in</Button>
+        </form>
+      </div>
       )
     }
   }

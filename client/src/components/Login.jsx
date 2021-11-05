@@ -50,7 +50,7 @@ class Login extends React.Component{
       }
       return (<form onSubmit={this.handleSubmit}>
         <Container>
-          <Row class="p-3">
+          <Row className="p-3">
             <InputGroup>
               <FormControl
                 placeholder="Email or Username"
@@ -58,7 +58,7 @@ class Login extends React.Component{
                 </FormControl>
             </InputGroup>
           </Row>
-          <Row class="p-3">
+          <Row className="p-3">
             <InputGroup>
               <FormControl
                 placeholder="Password"
