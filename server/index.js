@@ -1,3 +1,5 @@
+// import getSection from 'section.js'
+
 var pg = require('pg')
 var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
 var pgClient = new pg.Client(connectionString);
@@ -109,8 +111,7 @@ app.post('/profile', (req, res) => {
       if (err) { console.log(err.stack) }
       if (err || student.rows.length != 1) {
         res.json({ success: false })
-        return
-      }
+        return }
 
       editable = false;
       if (req.session.username == student.rows[0].username) { editable = true; }
@@ -123,8 +124,7 @@ app.post('/profile', (req, res) => {
         if (err) {
           console.log(err.stack)
           res.json({ success: false })
-          return
-        }
+          return }
 
         text = 'SELECT first_name, last_name, username FROM student WHERE'
         values = []
@@ -144,8 +144,7 @@ app.post('/profile', (req, res) => {
             if (err) {
               console.log(err.stack)
               res.json({ success: false })
-              return
-            }
+              return }
             // get that student's sections
             text = 'SELECT section_id FROM section_student WHERE student_id = $1'
             values = [student.rows[0].id]
@@ -154,8 +153,7 @@ app.post('/profile', (req, res) => {
               if (err) {
                 console.log(err.stack)
                 res.json({ success: false })
-                return
-              }
+                return }
               text = 'SELECT * FROM sections WHERE'
               values = []
 
@@ -178,8 +176,7 @@ app.post('/profile', (req, res) => {
                     result: student.rows[0],
                     friends: friends.rows,
                     sections: sections.rows,
-                    editable: editable
-                  })
+                    editable: editable })
                 })
               } else {
                 res.json({
@@ -187,8 +184,7 @@ app.post('/profile', (req, res) => {
                   result: student.rows[0],
                   friends: friends.rows,
                   sections: [],
-                  editable: editable
-                })
+                  editable: editable })
               }
             })
           })
@@ -201,8 +197,7 @@ app.post('/profile', (req, res) => {
             if (err) {
               console.log(err.stack)
               res.json({ success: false })
-              return
-            }
+              return }
             text = 'SELECT * FROM sections WHERE'
             values = []
 
@@ -217,15 +212,13 @@ app.post('/profile', (req, res) => {
                 if (err) {
                   console.log(err.stack)
                   res.json({ success: false })
-                  return
-                }
+                  return }
                 res.json({
                   success: true,
                   result: student.rows[0],
                   friends: [],
                   sections: sections.rows,
-                  editable: editable
-                })
+                  editable: editable })
               })
             } else {
               res.json({
@@ -233,8 +226,7 @@ app.post('/profile', (req, res) => {
                 result: student.rows[0],
                 friends: [],
                 sections: [],
-                editable: editable
-              })
+                editable: editable })
             }
           })
         }
@@ -262,8 +254,7 @@ app.post('/editProfile', (req, res) => {
     if (err) {
       console.log(err.stack)
       res.json({ success: false })
-      return
-    }
+      return }
     if (res_from_db.rows.length == 1) {
       res.json({ success: true, result: res_from_db.rows[0] })
     } else { res.json({ success: false }) }
@@ -299,8 +290,7 @@ app.post('/addSection', (req, res) => {
     if (err) {
       console.log(err.stack)
       res.json({ success: false })
-      return
-    }
+      return }
     if (res_from_db.rows.length == 1) {
       res.json({ success: true, result: res_from_db.rows[0] })
     } else { res.json({ success: false }) }
@@ -315,8 +305,7 @@ app.post('/addStudentToSection', (req, res) => {
     if (err) {
       console.log(err.stack)
       res.json({ success: false })
-      return
-    }
+      return }
     if (student.rows.length == 1) {
       text = 'SELECT id FROM sections WHERE code = $1'
       values = [req.body.section_code]
@@ -325,8 +314,7 @@ app.post('/addStudentToSection', (req, res) => {
         if (err) {
           console.log(err.stack)
           res.json({ success: false })
-          return
-        }
+          return }
         if (section.rows.length == 1) {
           text = 'INSERT INTO section_student (section_id, student_id) VALUES ($1, $2) RETURNING *'
           values = [section.rows[0].id, student.rows[0].id]
@@ -336,8 +324,7 @@ app.post('/addStudentToSection', (req, res) => {
             if (err) {
               console.log(err.stack)
               res.json({ success: false })
-              return
-            }
+              return }
             if (section_student.rows.length == 1) {
               res.json({ success: true, result: section_student.rows[0] })
             } else { res.json({ success: false }) }
@@ -346,6 +333,109 @@ app.post('/addStudentToSection', (req, res) => {
       })
     } else { res.json({ success: false }) }
   }) 
+});
+
+app.post('/section', (req, res) => {
+  text = 'SELECT * FROM sections WHERE code = $1'
+  values = [req.body.code]
+ 
+  pgClient.query(text, values, (err, section) => {
+    if (err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return }
+    // check if this student is enrolled in this section
+    text = 'SELECT * FROM section_student WHERE section_id = $1 AND student_id = ' + 
+          '(SELECT id FROM student WHERE username = $2)'
+    values = [section.rows[0].id, req.session.username]
+
+    pgClient.query(text, values, (err, enrolled) => {
+      if (err) {
+        console.log(err.stack)
+        res.json({ success: false })
+        return }
+      // if student isn't enrolled in section only return info about section
+      if (enrolled.rows.length == 0) {
+        res.json({
+          success: true,
+          enrolled: false,
+          section: section.rows[0],
+          students: [],
+          posts: [],
+          comments: []
+         })
+        return
+      }
+      //if student is enrolled in section, get posts, comments, and other students in the section
+      text = 'SELECT student_id from section_student WHERE section_id = $1'
+      values = [section.rows[0].id]
+
+      pgClient.query(text, values, (err, student_ids) => {
+        if (err) {
+          console.log(err.stack)
+          res.json({ success: false })
+          return }
+        text = 'SELECT id, first_name, last_name, username FROM student WHERE'
+        values = []
+
+        for (var i = 0; i < student_ids.rows.length; i++) {
+          text += ' id = $' + (i + 1).toString()
+          if (i != student_ids.rows.length - 1) text += ' OR'
+          values[i] = student_ids.rows[i].student_id
+        }
+
+        //section has at least 1 student because current student is enrolled
+        pgClient.query(text, values, (err, students) => {
+          if (err) {
+            console.log(err.stack)
+            res.json({ success: false })
+            return }
+          // need to get posts and comments
+          text = 'SELECT * FROM posts WHERE section_id = $1'
+          values = [section.rows[0].id]
+          pgClient.query(text, values, (err, posts) => {
+            if (err) {
+              console.log(err.stack)
+              res.json({ success: false })
+              return }
+            text = 'SELECT * FROM post_comments WHERE'
+            values = []
+
+            for (var i = 0; i < posts.rows.length; i++) {
+              text += ' id = $' + (i + 1).toString()
+              if (i != posts.rows.length - 1) text += ' OR'
+              values[i] = posts.rows[i].id
+            }
+
+            if (values == []) {
+              res.json({
+                success: true,
+                enrolled: true,
+                section: section.rows[0],
+                students: students.rows,
+                posts: posts.rows,
+                comments: [] })
+              return
+            }
+
+            pgClient.query(text, values, (err, comments) => {
+              if (err) {
+                console.log(err.stack)
+                res.json({ success: false })
+                return }
+              res.json({
+                success: true,
+                enrolled: true,
+                section: section.rows[0],
+                students: students.rows,
+                posts: posts.rows,
+                comments: comments.rows })
+            })
+          })
+        })
+      })
+    })
+  })
 });
 
 app.listen(port)

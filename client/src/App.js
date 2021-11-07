@@ -10,6 +10,7 @@ import { Profile } from './components';
 import { AdminLogin } from './components';
 import { AdminLogout } from './components';
 import { AdminProfile } from './components';
+import { Section } from './components';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/admin/login" exact component={() => <AdminLogin />} />
           <Route path="/admin/logout" exact component={() => <AdminLogout />} />
           <Route path="/admin/profile/:email" exact component={(e) => <AdminProfile data={e.match.params}/>} />
+          <Route path="/section/:code" exact component={(e) => <Section data={e.match.params}/>} />
         </Switch>
       </Router>
       </header>
