@@ -402,7 +402,7 @@ app.post('/section', (req, res) => {
             values = []
 
             for (var i = 0; i < posts.rows.length; i++) {
-              text += ' id = $' + (i + 1).toString()
+              text += ' post_id = $' + (i + 1).toString()
               if (i != posts.rows.length - 1) text += ' OR'
               values[i] = posts.rows[i].id
             }
@@ -437,5 +437,61 @@ app.post('/section', (req, res) => {
     })
   })
 });
+
+app.post('/comment', (req, res) => {
+  console.log("adding comment")
+  text = 'INSERT INTO post_comments (comment_content, comment_time, post_id, student_id) VALUES ($1, current_timestamp, $2, $3) RETURNING *'
+  values = [
+    req.body.comment_content,
+    req.body.post_id,
+    req.body.student_id
+  ]
+
+  pgClient.query(text, values, (err, comment) => {
+    if (err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return
+    }
+
+    if ( comment.rows.length != 1 ) {
+      res.json({ success: false })
+      return
+    }
+
+    res.json({
+      success: true,
+      comment: comment.rows[0]
+    })
+  })
+
+})
+
+app.post('/like', (req, res) => {
+  text = 'UPDATE posts SET likes = $1 WHERE id = $2 RETURNING *'
+  values = [
+    req.body.likes,
+    req.body.post_id
+  ]
+
+  pgClient.query(text, values, (err, post) => {
+    if (err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return
+    }
+
+    if ( post.rows.length != 1 ) {
+      res.json({ success: false })
+      return
+    }
+
+    res.json({
+      success: true,
+      post: post.rows[0]
+    })
+  })
+
+})
 
 app.listen(port)

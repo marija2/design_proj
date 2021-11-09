@@ -1,12 +1,113 @@
 import React from "react";
-// import Button from 'react-bootstrap/Button';
-// import InputGroup from 'react-bootstrap/InputGroup';
-// import FormControl from 'react-bootstrap/FormControl';
-// import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import { Redirect } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import { Redirect } from "react-router-dom";
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup'
+import Nav from 'react-bootstrap/Nav'
 import postRequest from "./PostRequest"
 
+class PostRender extends React.Component {
+    constructor(props) {
+        super(props)
+
+        this.handleLike = this.handleLike.bind(this);
+        this.handleComment = this.handleComment.bind(this);
+
+        this.state = {
+            post: props.post,
+            comments: props.comments,
+            student_first_name: props.student_first_name,
+            student_last_name: props.student_last_name,
+            student_username: props.student_username,
+            student_id: props.student_id
+        }
+    }
+
+    getComment(comment) {
+        return(
+            <ListGroup.Item>
+                <p className="h6">{comment.student_username}</p>
+                <p className="h5">{comment.comment.comment_content}</p>
+            </ListGroup.Item>
+        )
+    }
+
+    getComments() {
+        if (this.state.comments.length == 0) return
+        var comments = []
+        for (var i = 0; i < this.state.comments.length; i++) {
+            comments[i] = this.getComment(this.state.comments[i])
+        }
+        return (
+            <ListGroup className="list-group-flush">
+                {comments}
+            </ListGroup>
+        )
+    }
+
+    handleLike() {
+        postRequest('/like', {
+            post_id: this.state.post.id,
+            likes: this.state.post.likes + 1
+        }).then(data => {
+            if (data.success === false) return
+            this.setState({ post: data.post })
+        })
+
+        // window.location.reload(true);
+    }
+
+    handleComment(e) {
+        e.preventDefault()
+
+        console.log("handling comment")
+        console.log(this.state.student_id)
+
+        postRequest('/comment', {
+            post_id: this.state.post.id,
+            comment_content: e.target.comment_content.value,
+            student_id: this.state.student_id
+        }).then(data => {
+            if (data.success === false) return
+
+            var comments = this.state.comments
+            comments[comments.length] = new Comment(
+                data.comment,
+                this.state.student_first_name,
+                this.state.student_last_name,
+                this.state.student_username)
+
+            e.target.comment_content.value = ""
+
+            this.setState({ comments: comments })
+        })
+
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleComment}>
+                <Card className="text-dark">
+                    <Card.Header className="h5">{this.state.student_first_name} {this.state.student_last_name} </Card.Header>
+                    <Card.Body className="h5">
+                        {this.state.post.post_content}
+                    </Card.Body>
+                    {this.getComments()}
+                    <FormControl type="text" placeholder="Add a comment" name="comment_content"></FormControl>
+                    <Button type="submit" className="btn-light">➕</Button>
+                    <Card.Footer>{this.state.post.likes}
+                    <Button type="button" className="btn-light" onClick={this.handleLike}>🖤</Button>
+                    </Card.Footer>
+                </Card>
+            </form>
+        )
+    }
+}
+ 
 class Post {
     constructor(post) {
         this.post = post
@@ -14,21 +115,30 @@ class Post {
         this.student_first_name = ""
         this.student_last_name = ""
         this.student_username = ""
+        this.student_id = 0
     }
 
     setStudent(student) {
         this.student_first_name = student.first_name
         this.student_last_name = student.last_name
         this.student_username = student.username
+        this.student_id = student.id
     }
 }
 
 class Comment {
-    constructor(comment) {
+    // constructor(comment) {
+    //     this.comment = comment
+    //     this.student_first_name = ""
+    //     this.student_last_name = ""
+    //     this.student_username = ""
+    // }
+
+    constructor(comment, student_first_name = "", student_last_name = "", student_username = "") {
         this.comment = comment
-        this.student_first_name = ""
-        this.student_last_name = ""
-        this.student_username = ""
+        this.student_first_name = student_first_name
+        this.student_last_name = student_last_name
+        this.student_username = student_username
     }
 
     setStudent(student) {
@@ -38,7 +148,7 @@ class Comment {
     }
 }
 
-class Section extends React.Component{
+class Section extends React.Component {
     constructor(props) {
       super(props)
 
@@ -53,55 +163,57 @@ class Section extends React.Component{
       postRequest('/section', {
         code: props.data.code
       }).then(data => {
-        console.log(data)
 
-        if (data.success === true) {
-            var posts_with_comments = [];
-            for(var i = 0; i < data.posts.length; i++) {
-                posts_with_comments[i] = new Post(data.posts[i])
+        if (data.success === false) return;
 
-                console.log(data.students.length)
-                // find student that posted that
-                for(var j = 0; j < data.students.length; j++) {
-                    if (data.students[j].id === data.posts[i].student_id) {
-                        posts_with_comments[i].setStudent(data.students[j])
-                        break
-                    }
+        var posts_with_comments = [];
+        for(var i = 0; i < data.posts.length; i++) {
+            posts_with_comments[i] = new Post(data.posts[i])
+            // find student that posted that
+            for(var j = 0; j < data.students.length; j++) {
+                if (data.students[j].id === data.posts[i].student_id) {
+                    posts_with_comments[i].setStudent(data.students[j])
+                    break
                 }
+            }
 
-                for(j = 0; j < data.comments.length; j++) {
-                    if (data.comments[j].post_id === data.posts[i].id) {
-                        var comment = new Comment(data.comments[j])
+            for(j = 0; j < data.comments.length; j++) {
+                if (data.comments[j].post_id === data.posts[i].id) {
+                    var comment = new Comment(data.comments[j])
 
-                        // find student that wrote that comment
-                        for(var k = 0; k < data.students.length; k++) {
-                            if (data.students[k].id === data.comments[j].student_id) {
-                                comment.setStudent(data.students[k])
-                                break
-                            }
+                    // find student that wrote that comment
+                    for(var k = 0; k < data.students.length; k++) {
+                        if (data.students[k].id === data.comments[j].student_id) {
+                            comment.setStudent(data.students[k])
+                            break
                         }
-
-                        posts_with_comments[i].comments.push(comment)
                     }
+
+                    posts_with_comments[i].comments.push(comment)
                 }
-            } 
-            console.log(posts_with_comments)
-            this.setState({
-                name: data.section.section_name,
-                professor: data.section.professor,
-                time: data.section.section_time,
-                semester: data.section.semester,
-                cohort: data.section.cohort,
-                students: data.students,
-                posts: posts_with_comments,
-                enrolled: data.enrolled
-            });
+            }
         }
+        this.setState({
+            name: data.section.section_name,
+            professor: data.section.professor,
+            time: data.section.section_time,
+            semester: data.section.semester,
+            cohort: data.section.cohort,
+            students: data.students,
+            posts: posts_with_comments,
+            enrolled: data.enrolled
+        });
       })
     }
 
     getStudent(student) {
-        return (<h6>{student.first_name} {student.last_name} {student.username}</h6>)
+        return(
+            <div>
+                <a href={`/profile/${student.username}`} >
+                    {student.first_name} {student.last_name}
+                </a><br></br>
+            </div>
+        )
     }
 
     getStudents() {
@@ -116,7 +228,14 @@ class Section extends React.Component{
     }
 
     getPost(post) {
-        return(<h6>{post.post.post_content} {post.post.post_time} {post.post.likes} </h6>)
+        return(<PostRender
+            post={post.post}
+            comments={post.comments}
+            student_first_name={post.student_first_name}
+            student_last_name={post.student_last_name}
+            student_username={post.student_username}
+            student_id={post.student_id}
+            />)
     }
 
     getPosts() {
