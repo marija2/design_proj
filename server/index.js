@@ -1,5 +1,4 @@
 // import getSection from 'section.js'
-
 var pg = require('pg')
 var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
 var pgClient = new pg.Client(connectionString);
@@ -23,6 +22,19 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+function executeQuery(text, values, res) {
+  pgClient.query(text, values, (err, res_from_db) => {
+    if (err) console.log(err.stack)
+
+    if (err || res_from_db.rows.length != 1) {
+      res.json({ success: false })
+      return
+    }
+
+    res.json({ success: true, result: res_from_db.rows[0] })
+  }) 
+}
+
 app.post('/addStudent', (req, res) => {
   text = 'INSERT INTO student (email, password, first_name, last_name, university, academic_year, major, username) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *'
   values = [
@@ -36,16 +48,14 @@ app.post('/addStudent', (req, res) => {
     req.body.username
   ]
 
-  pgClient.query(text, values, (err, res_from_db) => {
-    if (err) {
-      console.log(err.stack)
-      res.json({ success: false })
-    } else {
-      if (res_from_db.rows.length == 1) {
-        res.json({ success: true, result: res_from_db.rows[0] })
-      } else { res.json({ success: false }) }
-    }
-  }) 
+  executeQuery(text, values, res);
+});
+
+app.post('/addClass', (req, res) => {
+  text = 'INSERT INTO classes (class_name, code) VALUES ($1, $2) RETURNING *'
+  values = [ req.body.class_name, req.body.code ]
+
+  executeQuery(text, values, res);
 });
 
 app.post('/admin/login',(req,res) => {
@@ -57,47 +67,45 @@ app.post('/admin/login',(req,res) => {
   console.log(req.session.username)
 
   pgClient.query(text, values, (err, res_from_db) => {
-    if (err) {
-      console.log(err.stack)
+    if (err) console.log(err.stack)
+
+    if (err || res_from_db.rows.length != 1) {
       res.json({ success: false })
-    } else {
-      if (res_from_db.rows.length == 1) {
-        req.session.username = req.body.email;
-        res.json({ success: true, result: res_from_db.rows[0] })
-      } else { res.json({success: false }) }
+      return
     }
+
+    req.session.username = req.body.email;
+    res.json({ success: true, result: res_from_db.rows[0] })
   }) 
 });
 
 app.post('/login',(req,res) => {
   // check if user with this email and password exists
-  text = 'SELECT username FROM student WHERE (email = $1 AND password = $2) OR (username = $1 AND password = $2)'
+  text = 'SELECT id, username FROM student WHERE (email = $1 AND password = $2) OR (username = $1 AND password = $2)'
   values = [req.body.email, req.body.password]
 
-  console.log(req.session)
   console.log(req.session.username)
 
   pgClient.query(text, values, (err, student) => {
-    if (err) {
-      console.log(err.stack)
+    if (err) console.log(err.stack)
+
+    if (err || student.rows.length != 1) {
       res.json({ success: false })
-    } else {
-      if (student.rows.length == 1) {
-        req.session.username = student.rows[0].username;
-        res.json({ success: true, result: student.rows[0] })
-      } else { res.json({ success: false }) }
+      return
     }
+
+    req.session.username = student.rows[0].username
+    req.session.my_id = student.rows[0].id
+    res.json({ success: true, result: student.rows[0] })
   }) 
 });
 
 app.get('/',(req,res) => {
-  let sess = req.session
-  if(sess.username) res.json({ success: true })
+  if(req.session.username) res.json({ success: true })
   else res.json({ success: false })
 });
 
 app.post('/session', (req, res) => {
-  console.log(req.session)
   console.log(req.session.username)
   if (req.session.username) res.json({ success: true })
   else res.json({ success: false })
@@ -113,8 +121,10 @@ app.post('/profile', (req, res) => {
         res.json({ success: false })
         return }
 
-      editable = false;
-      if (req.session.username == student.rows[0].username) { editable = true; }
+      editable = false
+      my_id = req.session.my_id
+
+      if (my_id == student.rows[0].id) { editable = true }
 
       text = 'SELECT * FROM friends WHERE friend1 = $1 OR friend2 = $1'
       values = [student.rows[0].id]
@@ -126,13 +136,20 @@ app.post('/profile', (req, res) => {
           res.json({ success: false })
           return }
 
-        text = 'SELECT first_name, last_name, username FROM student WHERE'
+        text = 'SELECT id, first_name, last_name, username FROM student WHERE'
         values = []
+
+        friend = false;
 
         // get each friend's first, last name, and email
         for (var i = 0; i < friend_list.rows.length; i++) {
           friend_id = friend_list.rows[i].friend1
-          if (friend_id == student.rows[0].id) { friend_id = friend_list.rows[i].friend2 }
+
+          if (friend_id == student.rows[0].id) {
+            friend_id = friend_list.rows[i].friend2
+          }
+
+          if (friend_id == my_id) friend = true
 
           text += ' id = $' + (i + 1).toString()
           if (i != friend_list.rows.length - 1) text += ' OR'
@@ -145,6 +162,7 @@ app.post('/profile', (req, res) => {
               console.log(err.stack)
               res.json({ success: false })
               return }
+            
             // get that student's sections
             text = 'SELECT section_id FROM section_student WHERE student_id = $1'
             values = [student.rows[0].id]
@@ -176,7 +194,9 @@ app.post('/profile', (req, res) => {
                     result: student.rows[0],
                     friends: friends.rows,
                     sections: sections.rows,
-                    editable: editable })
+                    editable: editable,
+                    friend: friend,
+                    my_id: my_id })
                 })
               } else {
                 res.json({
@@ -184,7 +204,9 @@ app.post('/profile', (req, res) => {
                   result: student.rows[0],
                   friends: friends.rows,
                   sections: [],
-                  editable: editable })
+                  editable: editable,
+                  friend: friend,
+                  my_id: my_id })
               }
             })
           })
@@ -218,7 +240,9 @@ app.post('/profile', (req, res) => {
                   result: student.rows[0],
                   friends: [],
                   sections: sections.rows,
-                  editable: editable })
+                  editable: editable,
+                  friend: friend,
+                  my_id: my_id })
               })
             } else {
               res.json({
@@ -226,7 +250,9 @@ app.post('/profile', (req, res) => {
                 result: student.rows[0],
                 friends: [],
                 sections: [],
-                editable: editable })
+                editable: editable,
+                friend: friend,
+                my_id: my_id })
             }
           })
         }
@@ -250,15 +276,7 @@ app.post('/editProfile', (req, res) => {
     req.body.username
   ]
 
-  pgClient.query(text, values, (err, res_from_db) => {
-    if (err) {
-      console.log(err.stack)
-      res.json({ success: false })
-      return }
-    if (res_from_db.rows.length == 1) {
-      res.json({ success: true, result: res_from_db.rows[0] })
-    } else { res.json({ success: false }) }
-  }) 
+  executeQuery(text, values, res);
 })
 
 app.post('/logout', (req, res) => {
@@ -286,15 +304,7 @@ app.post('/addSection', (req, res) => {
     req.body.section_code
   ]
 
-  pgClient.query(text, values, (err, res_from_db) => {
-    if (err) {
-      console.log(err.stack)
-      res.json({ success: false })
-      return }
-    if (res_from_db.rows.length == 1) {
-      res.json({ success: true, result: res_from_db.rows[0] })
-    } else { res.json({ success: false }) }
-  }) 
+  executeQuery(text, values, res);
 });
 
 app.post('/addStudentToSection', (req, res) => {
@@ -407,7 +417,7 @@ app.post('/section', (req, res) => {
               values[i] = posts.rows[i].id
             }
 
-            if (values == []) {
+            if (values.length == 0) {
               res.json({
                 success: true,
                 enrolled: true,
@@ -447,51 +457,65 @@ app.post('/comment', (req, res) => {
     req.body.student_id
   ]
 
-  pgClient.query(text, values, (err, comment) => {
-    if (err) {
-      console.log(err.stack)
-      res.json({ success: false })
-      return
-    }
-
-    if ( comment.rows.length != 1 ) {
-      res.json({ success: false })
-      return
-    }
-
-    res.json({
-      success: true,
-      comment: comment.rows[0]
-    })
-  })
-
+  executeQuery(text, values, res);
 })
 
 app.post('/like', (req, res) => {
   text = 'UPDATE posts SET likes = $1 WHERE id = $2 RETURNING *'
-  values = [
-    req.body.likes,
-    req.body.post_id
-  ]
+  values = [ req.body.likes, req.body.post_id ]
 
-  pgClient.query(text, values, (err, post) => {
-    if (err) {
-      console.log(err.stack)
+  executeQuery(text, values, res);
+})
+
+app.post('/drop', (req, res) => {
+  text = 'DELETE FROM section_student WHERE student_id = $1 AND section_id = $2'
+  values = [ req.body.student_id, req.body.section_id ]
+
+  pgClient.query(text, values, (err, deleted) => {
+    if (err) console.log(err.stack)
+
+    if ( err || deleted == 0 ) {
       res.json({ success: false })
       return
     }
 
-    if ( post.rows.length != 1 ) {
-      res.json({ success: false })
-      return
-    }
-
-    res.json({
-      success: true,
-      post: post.rows[0]
-    })
+    res.json({ success: true })
   })
+})
 
+app.post('/unfriend', (req, res) => {
+  text = 'DELETE FROM friends WHERE (friend1 = $1 AND friend2 = $2) OR (friend1 = $2 AND friend2 = $1)'
+  values = [ req.body.my_id, req.body.friends_id ]
+
+  pgClient.query(text, values, (err, unfriended) => {
+    if (err) console.log(err.stack)
+
+    if ( err || unfriended == 0 ) {
+      res.json({ success: false })
+      return
+    }
+
+    res.json({ success: true })
+  })
+})
+
+app.post('/friend', (req, res) => {
+  text = 'INSERT INTO friends (friend1, friend2) VALUES ($1, $2) RETURNING *'
+  values = [ req.body.my_id, req.body.friends_id ]
+
+  pgClient.query(text, values, (err, friended) => {
+    if (err) console.log(err.stack)
+
+    if ( err || friended.rows.length != 1 ) {
+      res.json({ success: false })
+      return
+    }
+
+    text = 'SELECT id, first_name, last_name, username FROM student WHERE id = $1'
+    values = [my_id]
+
+    executeQuery(text, values, res);
+  })
 })
 
 app.listen(port)

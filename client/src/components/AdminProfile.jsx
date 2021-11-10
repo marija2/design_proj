@@ -15,11 +15,13 @@ class AdminProfile extends React.Component{
             email: props.data.email,
             addStudentStatus: "",
             addSectionStatus: "",
-            addStudentToSectionStatus: ""
+            addStudentToSectionStatus: "",
+            addClassStatus: ""
         }
 
         this.handleAddStudent = this.handleAddStudent.bind(this)
         this.handleAddSection = this.handleAddSection.bind(this)
+        this.handleAddClass = this.handleAddClass.bind(this)
         this.handleAddStudentToSection = this.handleAddStudentToSection.bind(this)
     }
   
@@ -51,6 +53,23 @@ class AdminProfile extends React.Component{
             this.setState({ addStudentStatus: "Could not successfully add a student" })
         }
       })
+    }
+
+    handleAddClass(e) {
+        e.preventDefault();
+
+        postRequest('/addClass', {
+            class_name: e.target.class_name.value,
+            code: e.target.code.value
+          }).then(data => {
+            if (data.success === true) {
+                e.target.class_name.value = ""
+                e.target.code.value = ""
+                this.setState({ addClassStatus: "Successfully added a class"})
+            } else {
+                this.setState({ addClassStatus: "Couldn't successfully add a class"})
+             }
+          })
     }
 
     handleAddSection(e) {
@@ -98,6 +117,7 @@ class AdminProfile extends React.Component{
     render (){
       return (
         <div>
+            <a href={`/admin/logout`}>Log out</a>
             <form onSubmit={this.handleAddStudent}>
                 <br></br>
                 Add a student to the database:
@@ -205,6 +225,25 @@ class AdminProfile extends React.Component{
                 <br></br>
             </form>
             <h5>{this.state.addStudentToSectionStatus}</h5>
+            <form onSubmit={this.handleAddClass}>
+                <br></br>
+                Add class:
+                <Container>
+                    <Row className="p-1">
+                        <InputGroup>
+                            <FormControl placeholder="Class name" name="class_name" defaultValue=""></FormControl>
+                        </InputGroup>
+                    </Row>
+                    <Row className="p-1">
+                        <InputGroup>
+                            <FormControl placeholder="Class code" name="code" defaultValue=""></FormControl>
+                        </InputGroup>
+                    </Row>
+                </Container>
+                <Button type="submit" > Add class </Button>
+                <br></br>
+            </form>
+            <h5>{this.state.addClassStatus}</h5>
         </div>
       )
     }

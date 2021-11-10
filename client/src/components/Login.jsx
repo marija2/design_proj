@@ -49,6 +49,7 @@ class Login extends React.Component{
         return <Redirect to={this.state.redirect}/>
       }
       return (<form onSubmit={this.handleSubmit}>
+        <a href={`/admin/login`}>Admin login</a>
         <Container>
           <Row className="p-3">
             <InputGroup>

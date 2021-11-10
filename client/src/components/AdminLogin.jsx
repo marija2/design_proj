@@ -56,7 +56,9 @@ class AdminLogin extends React.Component{
       if (this.state.redirect) {
         return <div><Redirect to={this.state.redirect} /></div>
       }
-      return ( <div><form onSubmit={this.handleSubmit}>
+      return ( <div>
+        <a href={`/login`}>Student login</a>
+        <form onSubmit={this.handleSubmit}>
           Admin login
           <Container>
             <Row className="p-1">
@@ -66,7 +68,7 @@ class AdminLogin extends React.Component{
             </Row>
             <Row className="p-1">
               <InputGroup>
-                <FormControl placeholder="Password" name="password"></FormControl>
+                <FormControl placeholder="Password" name="password" type="password"></FormControl>
               </InputGroup>
             </Row>
           </Container>
