@@ -2,10 +2,15 @@ import React from "react";
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
-// import Container from 'react-bootstrap/Container';
+import Container from 'react-bootstrap/Container';
 // import Row from 'react-bootstrap/Row';
 // import { Redirect } from "react-router-dom";
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
 import postRequest from "./PostRequest"
+import Card from 'react-bootstrap/Card';
+
+import "./Profile.css";
 
 class Profile extends React.Component{
     constructor(props) {
@@ -43,7 +48,8 @@ class Profile extends React.Component{
           sections: data.sections,
           editable: data.editable, // will be editable if you are looking at your own profile
           friend: data.friend, // will be true if this person is my friend
-          my_id: data.my_id // this is my id, so I can friend/unfriend this person
+          my_id: data.my_id, // this is my id, so I can friend/unfriend this person
+          my_username: data.my_username
         })
       })
     }
@@ -89,7 +95,7 @@ class Profile extends React.Component{
     renderProfileEditMode() {
       return (
         <div>
-          <h1> {this.state.first_name} {this.state.last_name}</h1>
+          <h1>Edit your profile</h1>
           <form onSubmit={this.handleSubmit}>
           <InputGroup>
               <FormControl
@@ -193,18 +199,29 @@ class Profile extends React.Component{
 
     getUnfriendBtn(id) {
       if (this.state.editable === false) return
-      return (<Button onClick={() => {this.handleUnFriend(id)}}>Unfriend</Button>)
+      return (
+          <Button size="sm" variant="outline-secondary" onClick={() => {this.handleUnFriend(id)}}>
+            Unfriend
+          </Button>
+      )
     }
  
     getFriend(friend) {
-      return (
-        <div>
-          <a href={`/profile/${friend.username}`}>
-            {friend.first_name} {friend.last_name}
-          </a>
-          {this.getUnfriendBtn(friend.id)}
-          <br></br>
-        </div>
+      return(
+        <Card className="text-dark m-1">
+            <Card.Body className="h6 m-0">
+              <div class="row">
+                <div class="col-8">
+                  < a href={`/profile/${friend.username}`} class="text-dark text-decoration-none">
+                    {friend.first_name} {friend.last_name}
+                  </a>
+                </div>
+                <div class="col">
+                  {this.getUnfriendBtn(friend.id)}
+                </div>
+            </div>
+            </Card.Body>
+        </Card>
       )
     }
 
@@ -250,13 +267,14 @@ class Profile extends React.Component{
 
     getSection(section) {
       return(
-      <div>
-        <a href={`/section/${section.code}`}>
-          {section.section_name} {section.semester} {section.cohort}
-        </a>
-        {this.getDropBtn(section.id)}
-        <br></br>
-      </div>
+        <Card className="text-dark m-1">
+          <Card.Body className="h6">
+          < a href={`/section/${section.code}`} class="text-dark text-decoration-none">
+            {section.section_name} {section.semester} {section.cohort}
+          </a>
+          {this.getDropBtn(section.id)}
+          </Card.Body>
+      </Card>
       )
     }
 
@@ -331,19 +349,44 @@ class Profile extends React.Component{
 
     renderProfile() {
       return (
-        <div>
-          <h1> {this.state.first_name} {this.state.last_name}</h1>
-          {this.getPrefferedName()}
-          {this.getPronouns()}
-          <h5> {this.state.username} </h5>
-          <h5> {this.state.email} </h5>
-          <h5> {this.state.university} </h5>
-          <h5> {this.state.academic_year} </h5>
-          <h5> {this.state.major} </h5>
-          {this.getFriendStatus()}
-          {this.renderEditBtn()}
-          {this.getSections()}
-          {this.getFriends()}
+        <div className="w-100 h-100 bg-light text-dark fs-5">
+          <Navbar bg="light" expand="lg" fixed="top">
+            <Container>
+              <Navbar.Brand href="/">Home</Navbar.Brand>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                  <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
+                  <Nav.Link href="/">Messages</Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link href="/logout">Log out</Nav.Link>
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
+          <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
+            <div class="row h-100 pb-5">
+              <div class="col h-100 p-5 m-3 overflow-auto">
+                {this.getSections()}
+              </div>
+              <div class="col h-100 p-5 m-3 overflow-auto">
+                <h1> {this.state.first_name} {this.state.last_name}</h1>
+                {this.getPrefferedName()}
+                {this.getPronouns()}
+                <h5> {this.state.username} </h5>
+                <h5> {this.state.email} </h5>
+                <h5> {this.state.university} </h5>
+                <h5> {this.state.academic_year} </h5>
+                <h5> {this.state.major} </h5>
+                {this.getFriendStatus()}
+                {this.renderEditBtn()}
+              </div>
+              <div class="col h-100 p-5 m-3 overflow-auto">
+                {this.getFriends()}
+              </div>
+            </div>
+          </div>
       </div>
       )
     }

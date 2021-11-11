@@ -196,7 +196,8 @@ app.post('/profile', (req, res) => {
                     sections: sections.rows,
                     editable: editable,
                     friend: friend,
-                    my_id: my_id })
+                    my_id: my_id,
+                    my_username: req.session.username })
                 })
               } else {
                 res.json({
@@ -206,7 +207,8 @@ app.post('/profile', (req, res) => {
                   sections: [],
                   editable: editable,
                   friend: friend,
-                  my_id: my_id })
+                  my_id: my_id,
+                  my_username: req.session.username })
               }
             })
           })
@@ -242,7 +244,8 @@ app.post('/profile', (req, res) => {
                   sections: sections.rows,
                   editable: editable,
                   friend: friend,
-                  my_id: my_id })
+                  my_id: my_id,
+                  my_username: req.session.username })
               })
             } else {
               res.json({
@@ -252,7 +255,8 @@ app.post('/profile', (req, res) => {
                 sections: [],
                 editable: editable,
                 friend: friend,
-                my_id: my_id })
+                my_id: my_id,
+                my_username: req.session.username })
             }
           })
         }
@@ -372,7 +376,8 @@ app.post('/section', (req, res) => {
           section: section.rows[0],
           students: [],
           posts: [],
-          comments: []
+          comments: [],
+          my_username: req.session.username
          })
         return
       }
@@ -424,7 +429,8 @@ app.post('/section', (req, res) => {
                 section: section.rows[0],
                 students: students.rows,
                 posts: posts.rows,
-                comments: [] })
+                comments: [],
+                my_username: req.session.username })
               return
             }
 
@@ -439,7 +445,8 @@ app.post('/section', (req, res) => {
                 section: section.rows[0],
                 students: students.rows,
                 posts: posts.rows,
-                comments: comments.rows })
+                comments: comments.rows,
+                my_username: req.session.username })
             })
           })
         })

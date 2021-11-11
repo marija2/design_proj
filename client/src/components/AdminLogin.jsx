@@ -7,6 +7,10 @@ import Row from 'react-bootstrap/Row';
 import { Redirect } from "react-router-dom";
 import postRequest from "./PostRequest"
 import { generatePath } from "react-router";
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+
+import "./Profile.css"
 
 class AdminLogin extends React.Component{
     constructor(props) {
@@ -56,25 +60,42 @@ class AdminLogin extends React.Component{
       if (this.state.redirect) {
         return <div><Redirect to={this.state.redirect} /></div>
       }
-      return ( <div>
-        <a href={`/login`}>Student login</a>
-        <form onSubmit={this.handleSubmit}>
-          Admin login
-          <Container>
-            <Row className="p-1">
-              <InputGroup>
-                <FormControl placeholder="Email" name="email"></FormControl>
-              </InputGroup>
-            </Row>
-            <Row className="p-1">
-              <InputGroup>
-                <FormControl placeholder="Password" name="password" type="password"></FormControl>
-              </InputGroup>
-            </Row>
-          </Container>
-          <Button type="submit" > Sign in</Button>
-        </form>
-      </div>
+      return (
+        <div className="w-100 h-100 bg-light text-dark fs-5">
+          <Navbar bg="light" expand="lg" fixed="top">
+              <Container>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                  <Nav className="me-auto">
+                  </Nav>
+                  <Nav>
+                  <Nav.Link href="/login">Student</Nav.Link>
+                  </Nav>
+              </Navbar.Collapse>
+              </Container>
+          </Navbar>
+          <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
+            <div className="w-100 mt-150 text-secondary">
+              <h1>Welcome</h1>
+            </div>
+              <form onSubmit={this.handleSubmit}>
+              <Container>
+                <Row className="mt-4 mb-3 mlr-300">
+                  <InputGroup>
+                    <FormControl placeholder="Email" name="email"></FormControl>
+                  </InputGroup>
+                </Row>
+                <Row className="mb-3 mlr-300">
+                  <InputGroup>
+                    <FormControl placeholder="Password" name="password" type="password"></FormControl>
+                  </InputGroup>
+                </Row>
+              </Container>
+              <Button type="submit" variant="dark"> Sign in</Button>
+            </form>
+          </div>
+        </div>
+        
       )
     }
   }

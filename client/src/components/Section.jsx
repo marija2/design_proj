@@ -9,6 +9,9 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup'
 import Nav from 'react-bootstrap/Nav'
 import postRequest from "./PostRequest"
+import Navbar from 'react-bootstrap/Navbar'
+
+import "./Profile.css";
 
 class PostRender extends React.Component {
     constructor(props) {
@@ -201,7 +204,8 @@ class Section extends React.Component {
             cohort: data.section.cohort,
             students: data.students,
             posts: posts_with_comments,
-            enrolled: data.enrolled
+            enrolled: data.enrolled,
+            my_username: data.my_username
         });
       })
     }
@@ -251,6 +255,23 @@ class Section extends React.Component {
 
     render(){
         return (
+        <div className="w-100 h-100 bg-light text-dark fs-5">
+          <Navbar bg="light" expand="lg" fixed="top">
+            <Container>
+            <Navbar.Brand href="/">Home</Navbar.Brand>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
+                <Nav.Link href="/">Messages</Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link href="/logout">Log out</Nav.Link>
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
+          <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
             <div>
                 <h5>{this.state.name}</h5>
                 <h5>{this.state.professor}</h5>
@@ -262,6 +283,8 @@ class Section extends React.Component {
                 {this.getStudents()}
                 {this.getPosts()}
             </div>
+          </div>
+        </div>
         )
     }
 }

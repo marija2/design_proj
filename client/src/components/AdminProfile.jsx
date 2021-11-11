@@ -6,6 +6,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 // import { Redirect } from "react-router-dom";
 import postRequest from "./PostRequest"
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+
+import "./Profile.css"
 
 class AdminProfile extends React.Component{
     constructor(props) {
@@ -116,134 +120,147 @@ class AdminProfile extends React.Component{
 
     render (){
       return (
-        <div>
-            <a href={`/admin/logout`}>Log out</a>
-            <form onSubmit={this.handleAddStudent}>
-                <br></br>
-                Add a student to the database:
+        <div className="w-100 h-100 bg-light text-dark fs-5">
+            <Navbar bg="light" expand="lg" fixed="top">
                 <Container>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Student Email" name="student_email"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Student Username" name="username"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Student Password" name="student_password"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="First Name" name="first_name"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Last Name" name="last_name"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="University" name="university"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Academic year" name="academic_year"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Major" name="major"></FormControl>
-                        </InputGroup>
-                    </Row>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                    </Nav>
+                    <Nav>
+                    <Nav.Link href="/admin/logout">Logout</Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
                 </Container>
-                <Button type="submit" > Add student </Button>
-                <br></br>
-                {this.state.addStudentStatus}
-            </form>
-            <form onSubmit={this.handleAddSection}>
-                <br></br>
-                Add a section to the database:
-                <Container>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Section Name" name="section_name"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Section cohort" name="section_cohort"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Section semester" name="section_semester"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Section code" name="section_code"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Section Professor" name="section_professor"></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Section Time" name="section_time"></FormControl>
-                        </InputGroup>
-                    </Row>
-                </Container>
-                <Button type="submit" > Add section </Button>
-                <br></br>
-                {this.state.addSectionStatus}
-            </form>
-            <form onSubmit={this.handleAddStudentToSection}>
-                <br></br>
-                Add a student to a section:
-                <Container>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Students email or username" name="student_email" defaultValue=""></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Section code" name="section_code" defaultValue=""></FormControl>
-                        </InputGroup>
-                    </Row>
-                </Container>
-                <Button type="submit" > Add student to section </Button>
-                <br></br>
-            </form>
-            <h5>{this.state.addStudentToSectionStatus}</h5>
-            <form onSubmit={this.handleAddClass}>
-                <br></br>
-                Add class:
-                <Container>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Class name" name="class_name" defaultValue=""></FormControl>
-                        </InputGroup>
-                    </Row>
-                    <Row className="p-1">
-                        <InputGroup>
-                            <FormControl placeholder="Class code" name="code" defaultValue=""></FormControl>
-                        </InputGroup>
-                    </Row>
-                </Container>
-                <Button type="submit" > Add class </Button>
-                <br></br>
-            </form>
-            <h5>{this.state.addClassStatus}</h5>
+            </Navbar>
+            <div className="w-100 p-5 h-100 bg-light text-dark">
+                <form onSubmit={this.handleAddStudent}>
+                    <br></br>
+                    Add a student:
+                    <Container>
+                        <Row className="mt-3 mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Student Email" name="student_email"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Student Username" name="username"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Student Password" name="student_password"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="First Name" name="first_name"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Last Name" name="last_name"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="University" name="university"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Academic year" name="academic_year"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Major" name="major"></FormControl>
+                            </InputGroup>
+                        </Row>
+                    </Container>
+                    <Button type="submit" variant="secondary"> Add student </Button>
+                    <br></br>
+                    {this.state.addStudentStatus}
+                </form>
+                <form onSubmit={this.handleAddSection}>
+                    <br></br>
+                    Add a section:
+                    <Container>
+                        <Row className="mt-3 mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Section Name" name="section_name"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Section cohort" name="section_cohort"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Section semester" name="section_semester"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Section code" name="section_code"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Section Professor" name="section_professor"></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Section Time" name="section_time"></FormControl>
+                            </InputGroup>
+                        </Row>
+                    </Container>
+                    <Button type="submit" variant="secondary"> Add section </Button>
+                    <br></br>
+                    {this.state.addSectionStatus}
+                </form>
+                <form onSubmit={this.handleAddStudentToSection}>
+                    <br></br>
+                    Add a student to a section:
+                    <Container>
+                        <Row className="mt-3 mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Students email or username" name="student_email" defaultValue=""></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Section code" name="section_code" defaultValue=""></FormControl>
+                            </InputGroup>
+                        </Row>
+                    </Container>
+                    <Button type="submit" variant="secondary"> Add student to section </Button>
+                    <br></br>
+                </form>
+                <h5>{this.state.addStudentToSectionStatus}</h5>
+                <form onSubmit={this.handleAddClass}>
+                    <br></br>
+                    Add a class:
+                    <Container>
+                        <Row className="mt-3 mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Class name" name="class_name" defaultValue=""></FormControl>
+                            </InputGroup>
+                        </Row>
+                        <Row className="mb-3 mlr-300">
+                            <InputGroup>
+                                <FormControl placeholder="Class code" name="code" defaultValue=""></FormControl>
+                            </InputGroup>
+                        </Row>
+                    </Container>
+                    <Button type="submit" variant="secondary"> Add class </Button>
+                    <br></br>
+                </form>
+                <h5>{this.state.addClassStatus}</h5>
+            </div>
         </div>
       )
     }
