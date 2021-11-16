@@ -525,4 +525,46 @@ app.post('/friend', (req, res) => {
   })
 })
 
+app.post('/post', (req, res) => {
+  text = 'SELECT id, first_name, last_name, username FROM student WHERE username = $1'
+  values = [req.body.my_username]
+
+  console.log("here1")
+
+  pgClient.query(text, values, (err, student) => {
+    if (err) console.log(err.stack)
+
+    if ( err || student.rows.length != 1 ) {
+      res.json({ success: false })
+      return
+    }
+    console.log("here2")
+
+    text = 'INSERT INTO posts (post_content, likes, section_id, student_id, post_time) VALUES ($1, $2, $3, $4, current_timestamp) RETURNING *'
+    values = [
+      req.body.post_content,
+      0,
+      req.body.section_id,
+      student.rows[0].id
+    ]
+
+    pgClient.query(text, values, (err, post) => {
+      if (err) console.log(err.stack)
+  
+      if ( err || post.rows.length != 1 ) {
+        res.json({ success: false })
+        return
+      }
+      console.log("here3")
+
+      res.json({
+        success: true,
+        post: post.rows[0],
+        student: student.rows[0]
+      })
+
+    })
+  })
+})
+
 app.listen(port)

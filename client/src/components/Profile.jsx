@@ -94,67 +94,84 @@ class Profile extends React.Component{
 
     renderProfileEditMode() {
       return (
-        <div>
-          <h1>Edit your profile</h1>
+        <div class="col-5">
           <form onSubmit={this.handleSubmit}>
-          <InputGroup>
+          <Button type="submit"
+                  size="sm"
+                  variant="dark"
+                  className="m-2">
+                    Save
+          </Button>
+          <Button type="button"
+                  size="sm"
+                  variant="outline-dark"
+                  onClick={this.handleEditButtonClicked}>
+            Cancel
+          </Button>
+          <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="First Name"
                 name="first_name"
+                className="text-center"
                 defaultValue={this.state.first_name}>
               </FormControl>
             </InputGroup>
-            <InputGroup>
+            <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="Last Name"
                 name="last_name"
+                className="text-center"
                 defaultValue={this.state.last_name}>
               </FormControl>
             </InputGroup>
-            <InputGroup>
+            <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="Preferred Name"
                 name="preferred_name"
+                className="text-center"
                 defaultValue={this.state.preferred_name}>
               </FormControl>
             </InputGroup>
-            <InputGroup>
+            <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="Pronouns"
                 name="pronouns"
+                className="text-center"
                 defaultValue={this.state.pronouns}>
               </FormControl>
             </InputGroup>
-            <InputGroup>
+            <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="Email"
                 name="email"
+                className="text-center"
                 defaultValue={this.state.email}>
               </FormControl>
             </InputGroup>
-            <InputGroup>
+            <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="University"
                 name="university"
+                className="text-center"
                 defaultValue={this.state.university}>
               </FormControl>
             </InputGroup>
-            <InputGroup>
+            <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="Academic year"
                 name="academic_year"
+                className="text-center"
                 defaultValue={this.state.academic_year}>
               </FormControl>
             </InputGroup>
-            <InputGroup>
+            <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="Major"
                 name="major"
+                className="text-center"
                 defaultValue={this.state.major}>
               </FormControl>
             </InputGroup>
-            <Button type="submit" > Save changes </Button>
-            <Button type="button" onClick={this.handleEditButtonClicked}> Cancel </Button>
           </form>
         </div>
       )
@@ -162,13 +179,13 @@ class Profile extends React.Component{
 
     getPrefferedName() {
       if (this.state.preferred_name !== "") {
-        return (<h5> Preferred name: {this.state.preferred_name} </h5>)
+        return (<h6> <any class="text-secondary">Preferred:</any> {this.state.preferred_name} </h6>)
       }
     }
 
     getPronouns() {
       if (this.state.pronouns !== "") {
-        return (<h5> Pronouns: {this.state.pronouns} </h5>)
+        return (<h6> <any class="text-secondary">Pronouns:</any>  {this.state.pronouns} </h6>)
       }
     }
 
@@ -200,8 +217,11 @@ class Profile extends React.Component{
     getUnfriendBtn(id) {
       if (this.state.editable === false) return
       return (
-          <Button size="sm" variant="outline-secondary" onClick={() => {this.handleUnFriend(id)}}>
-            Unfriend
+          <Button size="sm"
+                  variant="outline-secondary"
+                  className="unfriend-btn"
+                  onClick={() => {this.handleUnFriend(id)}}>
+            x
           </Button>
       )
     }
@@ -209,17 +229,11 @@ class Profile extends React.Component{
     getFriend(friend) {
       return(
         <Card className="text-dark m-1">
-            <Card.Body className="h6 m-0">
-              <div class="row">
-                <div class="col-8">
+            <Card.Body className="h6 m-0 p-2">
                   < a href={`/profile/${friend.username}`} class="text-dark text-decoration-none">
                     {friend.first_name} {friend.last_name}
                   </a>
-                </div>
-                <div class="col">
                   {this.getUnfriendBtn(friend.id)}
-                </div>
-            </div>
             </Card.Body>
         </Card>
       )
@@ -227,9 +241,9 @@ class Profile extends React.Component{
 
     getFriends() {
       if (!this.state.friends) return
-      let result = [<h5> Friends </h5>]
+      let result = []
       for (var i = 0; i < this.state.friends.length; i++) {
-        result[i + 1] = this.getFriend(this.state.friends[i])
+        result[i] = this.getFriend(this.state.friends[i])
       }
       return (
         <div>{result}</div>
@@ -262,13 +276,20 @@ class Profile extends React.Component{
 
     getDropBtn(id) {
       if (this.state.editable === false) return
-      return (<Button onClick={()=>{this.handleDrop(id)}}>Drop</Button>)
+      return (
+        <Button size="sm"
+                variant="outline-secondary"
+                className="unfriend-btn"
+                onClick={()=>{this.handleDrop(id)}}>
+          x
+        </Button>
+      )
     }
 
     getSection(section) {
       return(
         <Card className="text-dark m-1">
-          <Card.Body className="h6">
+          <Card.Body className="h6 m-0 p-2">
           < a href={`/section/${section.code}`} class="text-dark text-decoration-none">
             {section.section_name} {section.semester} {section.cohort}
           </a>
@@ -280,9 +301,9 @@ class Profile extends React.Component{
 
     getSections() {
       if (!this.state.sections) return
-      let result = [<h5> Sections </h5>]
+      let result = []
       for (var i = 0; i < this.state.sections.length; i++) {
-        result[i + 1] = this.getSection(this.state.sections[i])
+        result[i] = this.getSection(this.state.sections[i])
       }
       return (
         <div>{result}</div>
@@ -335,65 +356,106 @@ class Profile extends React.Component{
       if (this.state.editable === true) return
 
       if (this.state.friend === true) {
-        return (<Button onClick={this.handleUnfriend}> Unfriend </Button>)
+        return (
+          <div>
+            <Button size="sm" variant="dark" onClick={this.handleUnfriend}>
+              Unfriend
+            </Button>
+          </div>
+        )
       } else {
-        return (<Button onClick={this.handleFriend}> Friend </Button>)
+        return (
+          <div>
+            <Button size="sm" variant="dark" onClick={this.handleFriend}>
+              Friend
+            </Button>
+          </div>
+        )
       }
     }
 
     renderEditBtn() {
       if (this.state.editable) {
-        return (<Button onClick={this.handleEditButtonClicked}>Edit profile</Button>)
+        return (
+          <div>
+            <Button size="sm" variant="dark" onClick={this.handleEditButtonClicked}>
+              Edit
+            </Button>
+          </div>
+        )
+      }
+    }
+
+    renderNavBar() {
+      return (
+        <Navbar bg="light" expand="lg" fixed="top">
+          <Container>
+            <Navbar.Brand href="/">Home</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="me-auto">
+                <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
+                <Nav.Link href="/">Messages</Nav.Link>
+              </Nav>
+              <Nav>
+                <Nav.Link href="/logout">Log out</Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+      )
+    }
+
+    renderProfileInfo() {
+      if (this.state.edit === true) {
+        return (
+          <div class="row h-40 pb-3 overflow-auto justify-content-md-center">
+            {this.renderProfileEditMode()}
+          </div>
+        )
+      } else {
+        return(
+        <div class="row h-40 pb-3 overflow-auto">
+          <h2> {this.state.first_name} {this.state.last_name}</h2>
+          <h6> {this.state.username} </h6>
+              {this.getPrefferedName()}
+              {this.getPronouns()}
+              <h6> <any class="text-secondary">Email:</any> {this.state.email} </h6>
+              <h6> <any class="text-secondary">Uni:</any> {this.state.university} </h6>
+              <h6> <any class="text-secondary">Year:</any> {this.state.academic_year} </h6>
+              <h6> <any class="text-secondary">Major:</any> {this.state.major} </h6>
+          {this.getFriendStatus()}
+          {this.renderEditBtn()}
+        </div>
+        )
       }
     }
 
     renderProfile() {
       return (
         <div className="w-100 h-100 bg-light text-dark fs-5">
-          <Navbar bg="light" expand="lg" fixed="top">
-            <Container>
-              <Navbar.Brand href="/">Home</Navbar.Brand>
-              <Navbar.Toggle aria-controls="basic-navbar-nav" />
-              <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                  <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
-                  <Nav.Link href="/">Messages</Nav.Link>
-                </Nav>
-                <Nav>
-                  <Nav.Link href="/logout">Log out</Nav.Link>
-                </Nav>
-              </Navbar.Collapse>
-            </Container>
-          </Navbar>
+          {this.renderNavBar()}
           <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
-            <div class="row h-100 pb-5">
-              <div class="col h-100 p-5 m-3 overflow-auto">
-                {this.getSections()}
+              {this.renderProfileInfo()}
+              <h5> Sections </h5>
+              <div class="row h-25 pb-5 overflow-auto justify-content-md-center">
+                <div class="col-5">
+                  {this.getSections()}
+                </div>
               </div>
-              <div class="col h-100 p-5 m-3 overflow-auto">
-                <h1> {this.state.first_name} {this.state.last_name}</h1>
-                {this.getPrefferedName()}
-                {this.getPronouns()}
-                <h5> {this.state.username} </h5>
-                <h5> {this.state.email} </h5>
-                <h5> {this.state.university} </h5>
-                <h5> {this.state.academic_year} </h5>
-                <h5> {this.state.major} </h5>
-                {this.getFriendStatus()}
-                {this.renderEditBtn()}
+              <h5> Friends </h5>
+              <div class="row h-25 pb-5 overflow-auto justify-content-md-center">
+                <div class="col-5">
+                  {this.getFriends()}
+                </div>
               </div>
-              <div class="col h-100 p-5 m-3 overflow-auto">
-                {this.getFriends()}
-              </div>
-            </div>
           </div>
       </div>
       )
     }
   
     render (){
-      if (this.state.edit === true) { return this.renderProfileEditMode() }
-      else { return this.renderProfile() }
+      return this.renderProfile()
     }
   }
 

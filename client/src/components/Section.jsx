@@ -10,6 +10,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import Nav from 'react-bootstrap/Nav'
 import postRequest from "./PostRequest"
 import Navbar from 'react-bootstrap/Navbar'
+import Form from 'react-bootstrap/Form'
 
 import "./Profile.css";
 
@@ -19,6 +20,7 @@ class PostRender extends React.Component {
 
         this.handleLike = this.handleLike.bind(this);
         this.handleComment = this.handleComment.bind(this);
+        this.flipSeeComments = this.flipSeeComments.bind(this);
 
         this.state = {
             post: props.post,
@@ -26,8 +28,15 @@ class PostRender extends React.Component {
             student_first_name: props.student_first_name,
             student_last_name: props.student_last_name,
             student_username: props.student_username,
-            student_id: props.student_id
+            student_id: props.student_id,
+            seeComments: false
         }
+    }
+
+    flipSeeComments(e) {
+        this.setState({
+            seeComments: !this.state.seeComments
+        })
     }
 
     getComment(comment) {
@@ -41,6 +50,8 @@ class PostRender extends React.Component {
 
     getComments() {
         if (this.state.comments.length == 0) return
+        if (this.state.seeComments === false) return
+
         var comments = []
         for (var i = 0; i < this.state.comments.length; i++) {
             comments[i] = this.getComment(this.state.comments[i])
@@ -60,8 +71,6 @@ class PostRender extends React.Component {
             if (data.success === false) return
             this.setState({ post: data.post })
         })
-
-        // window.location.reload(true);
     }
 
     handleComment(e) {
@@ -93,6 +102,41 @@ class PostRender extends React.Component {
 
     render() {
         return (
+            <div class="row">
+                <div class="row p-1">
+                <div class="col-10">
+                <InputGroup>
+                <InputGroup.Text>
+                    {this.state.student_first_name}
+                    {this.state.student_last_name}
+                </InputGroup.Text>
+                <Form.Control as="textarea"
+                value={this.state.post.post_content}
+                placeholder="Leave a comment here" readonly/>
+                <Button variant="dark"
+                        size="sm"
+                        onClick={this.flipSeeComments}>
+                    +
+                </Button>
+            </InputGroup>
+                </div>
+                <div class="col">
+            <InputGroup size="sm">
+                <InputGroup.Text size="sm">
+                    {this.state.post.likes}
+                </InputGroup.Text>
+                <Button variant="outline-dark"
+                        size="sm"
+                        onClick={this.handleLike}>
+                🖤
+                </Button></InputGroup></div>
+                </div>
+                <div class="row">
+                    {this.getComments()}
+                </div>
+            </div>
+        )
+        return (
             <form onSubmit={this.handleComment}>
                 <Card className="text-dark">
                     <Card.Header className="h5">{this.state.student_first_name} {this.state.student_last_name} </Card.Header>
@@ -112,12 +156,12 @@ class PostRender extends React.Component {
 }
  
 class Post {
-    constructor(post) {
+    constructor(post, student_first_name = "", student_last_name = "", student_username = "") {
         this.post = post
         this.comments = []
-        this.student_first_name = ""
-        this.student_last_name = ""
-        this.student_username = ""
+        this.student_first_name = student_first_name
+        this.student_last_name = student_last_name
+        this.student_username = student_username
         this.student_id = 0
     }
 
@@ -130,13 +174,6 @@ class Post {
 }
 
 class Comment {
-    // constructor(comment) {
-    //     this.comment = comment
-    //     this.student_first_name = ""
-    //     this.student_last_name = ""
-    //     this.student_username = ""
-    // }
-
     constructor(comment, student_first_name = "", student_last_name = "", student_username = "") {
         this.comment = comment
         this.student_first_name = student_first_name
@@ -159,6 +196,8 @@ class Section extends React.Component {
         redirect: false,
         code: props.data.code
       }
+
+      this.handlePost = this.handlePost.bind(this);
 
     //   this.handleSubmit = this.handleSubmit.bind(this);
 
@@ -202,6 +241,7 @@ class Section extends React.Component {
             time: data.section.section_time,
             semester: data.section.semester,
             cohort: data.section.cohort,
+            id: data.section.id,
             students: data.students,
             posts: posts_with_comments,
             enrolled: data.enrolled,
@@ -211,6 +251,15 @@ class Section extends React.Component {
     }
 
     getStudent(student) {
+        return(
+            <Card className="text-dark m-1">
+                <Card.Body className="h6 m-0 p-2">
+                      < a href={`/profile/${student.username}`} class="text-dark text-decoration-none">
+                        {student.first_name} {student.last_name}
+                      </a>
+                </Card.Body>
+            </Card>
+          )
         return(
             <div>
                 <a href={`/profile/${student.username}`} >
@@ -224,9 +273,9 @@ class Section extends React.Component {
         if (!this.state.students) return
         if (this.state.enrolled === false) return
 
-        var students = [<h3>Students</h3>]
+        var students = []
         for (var i = 0; i < this.state.students.length; i++) {
-            students[i + 1] = this.getStudent(this.state.students[i])
+            students[i] = this.getStudent(this.state.students[i])
         }
         return students
     }
@@ -246,11 +295,35 @@ class Section extends React.Component {
         if (!this.state.posts) return
         if (this.state.enrolled === false) return
 
-        var posts = [<h3>Posts</h3>]
+        var posts = []
         for (var i = 0; i < this.state.posts.length; i++) {
-            posts[i + 1] = this.getPost(this.state.posts[i])
+            posts[i] = this.getPost(this.state.posts[i])
         }
         return posts
+    }
+
+    handlePost(e) {
+        e.preventDefault()
+
+        postRequest('/post', {
+            post_content: e.target.post_content.value,
+            section_id: this.state.id,
+            my_username: this.state.my_username
+        }).then(data => {
+            if (data.success === false) return
+            console.log("success")
+
+            var posts = this.state.posts
+            posts[posts.length] = new Post(
+                data.post,
+                data.student.first_name,
+                data.student.last_name,
+                data.student.username)
+
+            e.target.post_content.value = ""
+
+            this.setState({ posts: posts })
+        })
     }
 
     render(){
@@ -272,16 +345,52 @@ class Section extends React.Component {
             </Container>
           </Navbar>
           <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
-            <div>
-                <h5>{this.state.name}</h5>
-                <h5>{this.state.professor}</h5>
-                <h5>{this.state.time}</h5>
-                <h5>{this.state.code}</h5>
-                <h5>{this.state.semester}</h5>
-                <h5>{this.state.cohort}</h5>
-
-                {this.getStudents()}
-                {this.getPosts()}
+            <div class="row h-100">
+                <div class="col-3 h-100 overflow-auto">
+                    <div class="row h-30 overflow-auto">
+                        <div class="col">
+                            <Card>
+                                <Card.Body>
+                                    <h5>{this.state.name}</h5>
+                                    <h6><any class="text-secondary">Professor:</any> {this.state.professor}</h6>
+                                    <h6><any class="text-secondary">Time:</any> {this.state.time}</h6>
+                                    <h6><any class="text-secondary">Code:</any>{this.state.code}</h6>
+                                    <h6><any class="text-secondary">Semester:</any> {this.state.semester}</h6>
+                                    <h6> <any class="text-secondary">Cohort:</any> {this.state.cohort}</h6>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                    </div>
+                    <h5>Students</h5>
+                    <div class="row h-60 overflow-auto">
+                        <div class="col">
+                            {this.getStudents()}
+                        </div>
+                    </div>
+                </div>
+                <div class="col h-100 overflow-auto">
+                    <div class="row h-10 overflow-auto">
+                        <div class="col">
+                            <form onSubmit={this.handlePost}>
+                            <InputGroup>
+                                <FormControl type="text"
+                                            placeholder="Add a post"
+                                            name="post_content"
+                                            size="lg">
+                                </FormControl>
+                                <Button variant="dark" type="submit">
+                                    +
+                                </Button>
+                            </InputGroup>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row h-80 overflow-auto">
+                        <div class="col mt-4">
+                            {this.getPosts()}
+                        </div>
+                    </div>
+                </div>
             </div>
           </div>
         </div>
