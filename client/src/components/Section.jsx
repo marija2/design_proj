@@ -11,6 +11,7 @@ import Nav from 'react-bootstrap/Nav'
 import postRequest from "./PostRequest"
 import Navbar from 'react-bootstrap/Navbar'
 import Form from 'react-bootstrap/Form'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 
 import "./Profile.css";
 
@@ -41,15 +42,26 @@ class PostRender extends React.Component {
 
     getComment(comment) {
         return(
-            <ListGroup.Item>
-                <p className="h6">{comment.student_username}</p>
-                <p className="h5">{comment.comment.comment_content}</p>
-            </ListGroup.Item>
+            <InputGroup className="p-1">
+                <InputGroup.Text className="w-25 justify-content-md-center">
+                {comment.student_first_name}
+                {comment.student_last_name}
+                </InputGroup.Text>
+                <Form.Control as="textarea"
+                            className="text-center"
+                            size="sm"
+                            rows={1}
+                            value={comment.comment.comment_content}>
+                </Form.Control>
+            </InputGroup>
+            // <ListGroup.Item>
+            //     <p className="h6">{comment.student_username}</p>
+            //     <p className="h5">{comment.comment.comment_content}</p>
+            // </ListGroup.Item>
         )
     }
 
     getComments() {
-        if (this.state.comments.length == 0) return
         if (this.state.seeComments === false) return
 
         var comments = []
@@ -57,9 +69,23 @@ class PostRender extends React.Component {
             comments[i] = this.getComment(this.state.comments[i])
         }
         return (
-            <ListGroup className="list-group-flush">
-                {comments}
-            </ListGroup>
+            <div>
+                <div class="row mh-150 overflow-auto p-2">
+                    {comments}
+                </div>
+                <form onSubmit={this.handleComment}>
+                <InputGroup>
+                    <FormControl type="text"
+                                placeholder="Add a comment"
+                                name="comment_content"
+                                size="sm">
+                    </FormControl>
+                    <Button variant="dark" type="submit">
+                        +
+                    </Button>
+                </InputGroup>
+                </form>
+            </div>
         )
     }
 
@@ -69,15 +95,14 @@ class PostRender extends React.Component {
             likes: this.state.post.likes + 1
         }).then(data => {
             if (data.success === false) return
-            this.setState({ post: data.post })
+            this.setState({ post: data.result })
         })
     }
 
     handleComment(e) {
         e.preventDefault()
 
-        console.log("handling comment")
-        console.log(this.state.student_id)
+        if (e.target.comment_content.value == "") return
 
         postRequest('/comment', {
             post_id: this.state.post.id,
@@ -88,7 +113,7 @@ class PostRender extends React.Component {
 
             var comments = this.state.comments
             comments[comments.length] = new Comment(
-                data.comment,
+                data.result,
                 this.state.student_first_name,
                 this.state.student_last_name,
                 this.state.student_username)
@@ -101,56 +126,51 @@ class PostRender extends React.Component {
     }
 
     render() {
+        var d = new Date(this.state.post.post_time)
         return (
             <div class="row">
                 <div class="row p-1">
-                <div class="col-10">
-                <InputGroup>
-                <InputGroup.Text>
-                    {this.state.student_first_name}
-                    {this.state.student_last_name}
-                </InputGroup.Text>
-                <Form.Control as="textarea"
-                value={this.state.post.post_content}
-                placeholder="Leave a comment here" readonly/>
-                <Button variant="dark"
-                        size="sm"
-                        onClick={this.flipSeeComments}>
-                    +
-                </Button>
-            </InputGroup>
-                </div>
                 <div class="col">
-            <InputGroup size="sm">
-                <InputGroup.Text size="sm">
-                    {this.state.post.likes}
-                </InputGroup.Text>
-                <Button variant="outline-dark"
-                        size="sm"
-                        onClick={this.handleLike}>
-                🖤
-                </Button></InputGroup></div>
+                <InputGroup>
+                    <InputGroup.Text className="w-25 justify-content-md-center">
+                        {this.state.student_first_name}
+                        {this.state.student_last_name}
+                        <br></br>
+                        {d.toLocaleString()}
+                    </InputGroup.Text>
+                    <Form.Control as="textarea"
+                    value={this.state.post.post_content}
+                    className="text-center mr-10"
+                    rows={3}
+                    readonly/>
+                    <ButtonGroup vertical>
+                        <Button variant="outline-dark"
+                            size="sm"
+                            onClick={this.flipSeeComments}>
+                            Comment
+                        </Button>
+                        <ButtonGroup className="h-45">
+                        <Button variant="outline-dark"
+                            size="sm" disabled>
+                            {this.state.post.likes}
+                        </Button>
+                        <Button variant="outline-dark"
+                            size="sm"
+                            onClick={this.handleLike}>
+                            🖤
+                        </Button>
+                        </ButtonGroup>
+                    </ButtonGroup>
+                </InputGroup>
                 </div>
-                <div class="row">
+                </div>
+                <div class="row justify-content-md-center">
+                    <div class="col-11">
+
                     {this.getComments()}
+                    </div>
                 </div>
             </div>
-        )
-        return (
-            <form onSubmit={this.handleComment}>
-                <Card className="text-dark">
-                    <Card.Header className="h5">{this.state.student_first_name} {this.state.student_last_name} </Card.Header>
-                    <Card.Body className="h5">
-                        {this.state.post.post_content}
-                    </Card.Body>
-                    {this.getComments()}
-                    <FormControl type="text" placeholder="Add a comment" name="comment_content"></FormControl>
-                    <Button type="submit" className="btn-light">➕</Button>
-                    <Card.Footer>{this.state.post.likes}
-                    <Button type="button" className="btn-light" onClick={this.handleLike}>🖤</Button>
-                    </Card.Footer>
-                </Card>
-            </form>
         )
     }
 }
@@ -260,13 +280,6 @@ class Section extends React.Component {
                 </Card.Body>
             </Card>
           )
-        return(
-            <div>
-                <a href={`/profile/${student.username}`} >
-                    {student.first_name} {student.last_name}
-                </a><br></br>
-            </div>
-        )
     }
 
     getStudents() {
@@ -280,7 +293,7 @@ class Section extends React.Component {
         return students
     }
 
-    getPost(post) {
+    getPost(post, i) {
         return(<PostRender
             post={post.post}
             comments={post.comments}
@@ -288,6 +301,7 @@ class Section extends React.Component {
             student_last_name={post.student_last_name}
             student_username={post.student_username}
             student_id={post.student_id}
+            key={i}
             />)
     }
 
@@ -296,8 +310,10 @@ class Section extends React.Component {
         if (this.state.enrolled === false) return
 
         var posts = []
-        for (var i = 0; i < this.state.posts.length; i++) {
-            posts[i] = this.getPost(this.state.posts[i])
+        var c = 0;
+        for (var i = this.state.posts.length - 1; i >= 0; i--) {
+            posts[c] = this.getPost(this.state.posts[i], i)
+            c++
         }
         return posts
     }
@@ -305,46 +321,58 @@ class Section extends React.Component {
     handlePost(e) {
         e.preventDefault()
 
+        if (e.target.post_content.value == "") return
+
         postRequest('/post', {
             post_content: e.target.post_content.value,
             section_id: this.state.id,
             my_username: this.state.my_username
         }).then(data => {
             if (data.success === false) return
-            console.log("success")
 
-            var posts = this.state.posts
-            posts[posts.length] = new Post(
+            console.log(this.state.posts)
+            console.log(this.state.posts.length)
+
+            var new_posts = this.state.posts
+            new_posts[this.state.posts.length] = new Post(
                 data.post,
                 data.student.first_name,
                 data.student.last_name,
                 data.student.username)
 
+            console.log(new_posts)
+            console.log(new_posts.length)
+
             e.target.post_content.value = ""
 
-            this.setState({ posts: posts })
+            this.setState({ posts: new_posts })
         })
     }
 
-    render(){
+    getNotEnrolled() {
+        if (this.state.enrolled === true) return
+
+        return(
+            <div class="row h-100 justify-content-md-center">
+                <div class="col-4">
+                    <Card>
+                        <Card.Body>
+                            <h5>{this.state.name}</h5>
+                            <h6><any class="text-secondary">Professor:</any> {this.state.professor}</h6>
+                            <h6><any class="text-secondary">Time:</any> {this.state.time}</h6>
+                            <h6><any class="text-secondary">Code:</any>{this.state.code}</h6>
+                            <h6><any class="text-secondary">Semester:</any> {this.state.semester}</h6>
+                            <h6> <any class="text-secondary">Cohort:</any> {this.state.cohort}</h6>
+                        </Card.Body>
+                    </Card>
+                </div>
+            </div>
+        )
+    }
+
+    getEnrolled() {
+        if (this.state.enrolled === false) return
         return (
-        <div className="w-100 h-100 bg-light text-dark fs-5">
-          <Navbar bg="light" expand="lg" fixed="top">
-            <Container>
-            <Navbar.Brand href="/">Home</Navbar.Brand>
-              <Navbar.Toggle aria-controls="basic-navbar-nav" />
-              <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
-                <Nav.Link href="/">Messages</Nav.Link>
-                </Nav>
-                <Nav>
-                  <Nav.Link href="/logout">Log out</Nav.Link>
-                </Nav>
-              </Navbar.Collapse>
-            </Container>
-          </Navbar>
-          <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
             <div class="row h-100">
                 <div class="col-3 h-100 overflow-auto">
                     <div class="row h-30 overflow-auto">
@@ -392,6 +420,30 @@ class Section extends React.Component {
                     </div>
                 </div>
             </div>
+        )
+    }
+
+    render(){
+        return (
+        <div className="w-100 h-100 bg-light text-dark fs-5">
+          <Navbar bg="light" expand="lg" fixed="top">
+            <Container>
+            <Navbar.Brand href="/">Home</Navbar.Brand>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
+                <Nav.Link href="/">Messages</Nav.Link>
+                </Nav>
+                <Nav>
+                  <Nav.Link href="/logout">Log out</Nav.Link>
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
+          <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
+            {this.getNotEnrolled()}
+            {this.getEnrolled()}
           </div>
         </div>
         )

@@ -105,6 +105,108 @@ app.get('/',(req,res) => {
   else res.json({ success: false })
 });
 
+app.post('/home', (req, res) => {
+  console.log(req.session.username)
+
+  if (!req.session.username) {
+    res.json({ success: true, session: false })
+    return
+  }
+  
+  // get all posts from all sections this student is taking
+
+  text = 'SELECT * FROM section_student WHERE student_id = $1'
+  values = [req.session.my_id]
+
+  pgClient.query(text, values, (err, section_ids) => {
+    if (err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return
+    }
+
+    if (section_ids.rows.length == 0) {
+      res.json({
+        success: true,
+        session: true,
+        sections: [],
+        my_username: req.session.username
+      })
+    }
+
+    text = 'SELECT * FROM sections WHERE'
+    values = []
+
+    for (var i = 0; i < section_ids.rows.length; i++) {
+      text += ' id = $' + (i + 1).toString()
+      if (i != section_ids.rows.length - 1) text += ' OR'
+      values[i] = section_ids.rows[i].section_id
+    }
+
+    pgClient.query(text, values, (err, sections) => {
+      if (err) {
+        console.log(err.stack)
+        res.json({ success: false })
+        return
+      }
+
+      text = 'SELECT * FROM posts WHERE'
+      values = []
+
+      for (var i = 0; i < section_ids.rows.length; i++) {
+        text += ' section_id = $' + (i + 1).toString()
+        if (i != section_ids.rows.length - 1) text += ' OR'
+        values[i] = section_ids.rows[i].section_id
+      }
+
+      pgClient.query(text, values, (err, posts) => {
+        if (err) {
+          console.log(err.stack)
+          res.json({ success: false })
+          return
+        }
+
+        if (posts.rows.length == 0) {
+          res.json({
+            success: true,
+            session: true,
+            sections: sections.rows,
+            posts: [],
+            my_username: req.session.username
+          })
+          return
+        }
+
+        text = 'SELECT * FROM post_comments WHERE'
+        values = []
+
+        for (var i = 0; i < posts.rows.length; i++) {
+          text += ' post_id = $' + (i + 1).toString()
+          if (i != posts.rows.length - 1) text += ' OR'
+          values[i] = posts.rows[i].id
+        }
+
+        pgClient.query(text, values, (err, comments) => {
+          if (err) {
+            console.log(err.stack)
+            res.json({ success: false })
+            return
+          }
+
+          res.json({
+            success: true,
+            session: true,
+            sections: sections.rows,
+            posts: posts.rows,
+            comments: comments.rows,
+            my_username: req.session.username
+          })
+        })
+      })
+    })
+  })
+})
+
 app.post('/session', (req, res) => {
   console.log(req.session.username)
   if (req.session.username) res.json({ success: true })
@@ -529,8 +631,6 @@ app.post('/post', (req, res) => {
   text = 'SELECT id, first_name, last_name, username FROM student WHERE username = $1'
   values = [req.body.my_username]
 
-  console.log("here1")
-
   pgClient.query(text, values, (err, student) => {
     if (err) console.log(err.stack)
 
@@ -538,7 +638,6 @@ app.post('/post', (req, res) => {
       res.json({ success: false })
       return
     }
-    console.log("here2")
 
     text = 'INSERT INTO posts (post_content, likes, section_id, student_id, post_time) VALUES ($1, $2, $3, $4, current_timestamp) RETURNING *'
     values = [
@@ -555,7 +654,6 @@ app.post('/post', (req, res) => {
         res.json({ success: false })
         return
       }
-      console.log("here3")
 
       res.json({
         success: true,

@@ -7,6 +7,14 @@
     margin-right: 300px;
 }
 
+.mh-150 {
+    max-height: 150px;
+}
+
+.mr-10 {
+    margin-right: 10px;
+}
+
 .mt-150 {
     margin-top: 150px;
 }
@@ -17,6 +25,11 @@
 .h-40 {
     height: 40%;
 }
+
+.h-45 {
+    height: 45%;
+}
+
 .h-30 {
     height: 30%;
 }

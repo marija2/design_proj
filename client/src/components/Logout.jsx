@@ -65,7 +65,7 @@ class Logout extends React.Component{
               </div>
               <div>
                 <form onSubmit={this.handleHome}>
-                  <Button type="submit" variant="secondary"> Home page </Button>
+                  <Button type="submit" variant="outline-dark"> Home page </Button>
                 </form>
               </div>
             </div>
