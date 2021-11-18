@@ -538,7 +538,7 @@ class Profile extends React.Component{
                     <InputGroup.Text>
                         <FaSearch/>
                     </InputGroup.Text>
-                <FormControl placeholder="Search from all students and sections..."
+                <FormControl placeholder="Search from all students and sections"
                     name="search_val"
                     className="text-center"
                     size="sm"
