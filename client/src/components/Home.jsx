@@ -10,7 +10,6 @@ import Post from "./Post";
 import Comment from "./Comment";
 import FormControl from 'react-bootstrap/FormControl'
 import InputGroup from 'react-bootstrap/InputGroup'
-import NavDropdown from 'react-bootstrap/NavDropdown'
 
 import { FaSearch } from 'react-icons/fa'
 
@@ -274,7 +273,7 @@ class Home extends React.Component {
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
                             <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
-                            <Nav.Link href="/">Messages</Nav.Link>
+                            <Nav.Link href={`/messages/${this.state.my_username}`}>Messages</Nav.Link>
                             </Nav>
                             <Nav>
                             <Nav.Link href="/logout">Log out</Nav.Link>

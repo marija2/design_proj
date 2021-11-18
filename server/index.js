@@ -742,4 +742,19 @@ app.post('/search', (req, res) => {
   })
 })
 
+app.post('/messages', (req, res) => {
+  text = 'SELECT * FROM msgs WHERE sender = $1 OR receiver = $1'
+  values = [req.session.my_id]
+
+  pgClient.query(text, values, (err, msgs) => {
+    if ( err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return
+    }
+
+    res.json({ success: true, result: msgs.rows })
+  })
+})
+
 app.listen(port)

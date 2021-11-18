@@ -11,6 +11,7 @@ import { AdminLogin } from './components';
 import { AdminLogout } from './components';
 import { AdminProfile } from './components';
 import { Section } from './components';
+import { Messages } from './components'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/logout" exact component={() => <Logout />} />
           <Route path="/" exact component={() => <Home />} />
           <Route path="/login" exact component={() => <Login />} />
+          <Route path="/messages/:username" exact component={(e) => <Messages data={e.match.params}/>} />
           <Route path="/profile/:username" exact component={(e) => <Profile data={e.match.params}/>} />
           <Route path="/admin/login" exact component={() => <AdminLogin />} />
           <Route path="/admin/logout" exact component={() => <AdminLogout />} />

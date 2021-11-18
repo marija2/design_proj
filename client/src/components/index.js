@@ -6,3 +6,4 @@ export { default as AdminLogin } from "./AdminLogin";
 export { default as AdminLogout } from "./AdminLogout";
 export { default as AdminProfile } from "./AdminProfile";
 export { default as Section } from "./Section";
+export { default as Messages } from "./Messages";
