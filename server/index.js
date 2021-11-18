@@ -177,29 +177,80 @@ app.post('/home', (req, res) => {
           return
         }
 
-        text = 'SELECT * FROM post_comments WHERE'
+        // get info on students who have posted
+
+        text = 'SELECT id, first_name, last_name, username FROM student WHERE'
         values = []
 
         for (var i = 0; i < posts.rows.length; i++) {
-          text += ' post_id = $' + (i + 1).toString()
+          text += ' id = $' + (i + 1).toString()
           if (i != posts.rows.length - 1) text += ' OR'
-          values[i] = posts.rows[i].id
+          values[i] = posts.rows[i].student_id
         }
 
-        pgClient.query(text, values, (err, comments) => {
+        pgClient.query(text, values, (err, posters) => {
           if (err) {
             console.log(err.stack)
             res.json({ success: false })
             return
           }
 
-          res.json({
-            success: true,
-            session: true,
-            sections: sections.rows,
-            posts: posts.rows,
-            comments: comments.rows,
-            my_username: req.session.username
+          text = 'SELECT * FROM post_comments WHERE'
+          values = []
+  
+          for (var i = 0; i < posts.rows.length; i++) {
+            text += ' post_id = $' + (i + 1).toString()
+            if (i != posts.rows.length - 1) text += ' OR'
+            values[i] = posts.rows[i].id
+          }
+
+          pgClient.query(text, values, (err, comments) => {
+            if (err) {
+              console.log(err.stack)
+              res.json({ success: false })
+              return
+            }
+
+            if (comments.rows.length == 0) {
+              res.json({
+                success: true,
+                session: true,
+                sections: sections.rows,
+                posts: posts.rows,
+                posters: posters.rows,
+                comments: [],
+                my_username: req.session.username
+              })
+              return
+            }
+
+            text = 'SELECT id, first_name, last_name, username FROM student WHERE'
+            values = []
+
+            for (var i = 0; i < comments.rows.length; i++) {
+              text += ' id = $' + (i + 1).toString()
+              if (i != comments.rows.length - 1) text += ' OR'
+              values[i] = comments.rows[i].student_id
+            }
+
+            pgClient.query(text, values, (err, commenters) => {
+              if (err) {
+                console.log(err.stack)
+                res.json({ success: false })
+                return
+              }
+
+              res.json({
+                success: true,
+                session: true,
+                sections: sections.rows,
+                posts: posts.rows,
+                posters: posters.rows,
+                comments: comments.rows,
+                commenters: commenters.rows,
+                my_username: req.session.username
+              })
+            })
           })
         })
       })

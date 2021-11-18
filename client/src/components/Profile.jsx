@@ -96,18 +96,6 @@ class Profile extends React.Component{
       return (
         <div class="col-5">
           <form onSubmit={this.handleSubmit}>
-          <Button type="submit"
-                  size="sm"
-                  variant="dark"
-                  className="m-2">
-                    Save
-          </Button>
-          <Button type="button"
-                  size="sm"
-                  variant="outline-dark"
-                  onClick={this.handleEditButtonClicked}>
-            Cancel
-          </Button>
           <InputGroup size="sm" className="p-1">
               <FormControl
                 placeholder="First Name"
@@ -172,6 +160,18 @@ class Profile extends React.Component{
                 defaultValue={this.state.major}>
               </FormControl>
             </InputGroup>
+            <Button type="submit"
+                    size="sm"
+                    variant="dark"
+                    className="m-2">
+                      Save
+            </Button>
+            <Button type="button"
+                    size="sm"
+                    variant="outline-dark"
+                    onClick={this.handleEditButtonClicked}>
+              Cancel
+            </Button>
           </form>
         </div>
       )
@@ -409,13 +409,13 @@ class Profile extends React.Component{
     renderProfileInfo() {
       if (this.state.edit === true) {
         return (
-          <div class="row h-40 pb-3 overflow-auto justify-content-md-center">
+          <div class="row h-100 pb-3 overflow-auto justify-content-md-center">
             {this.renderProfileEditMode()}
           </div>
         )
       } else {
         return(
-        <div class="row h-40 pb-3 overflow-auto">
+        <div class="row h-100 pb-3 overflow-auto">
           <h2> {this.state.first_name} {this.state.last_name}</h2>
           <h6> {this.state.username} </h6>
               {this.getPrefferedName()}
@@ -436,19 +436,21 @@ class Profile extends React.Component{
         <div className="w-100 h-100 bg-light text-dark fs-5">
           {this.renderNavBar()}
           <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
-              {this.renderProfileInfo()}
-              <h5> Sections </h5>
-              <div class="row h-25 pb-5 overflow-auto justify-content-md-center">
-                <div class="col-5">
+            <div className="row h-100">
+              <div className="col-5 h-100">
+                <h5> Sections </h5>
+                <div className="row h-40 overflow-auto">
                   {this.getSections()}
                 </div>
-              </div>
-              <h5> Friends </h5>
-              <div class="row h-25 pb-5 overflow-auto justify-content-md-center">
-                <div class="col-5">
+                <h5> Friends </h5>
+                <div className="row h-40 overflow-auto">
                   {this.getFriends()}
                 </div>
               </div>
+              <div className="col h-50">
+                {this.renderProfileInfo()}
+              </div>
+            </div>
           </div>
       </div>
       )

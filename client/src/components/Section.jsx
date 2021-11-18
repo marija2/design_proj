@@ -3,210 +3,15 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import { Redirect } from "react-router-dom";
 import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup'
 import Nav from 'react-bootstrap/Nav'
 import postRequest from "./PostRequest"
 import Navbar from 'react-bootstrap/Navbar'
-import Form from 'react-bootstrap/Form'
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import PostRender from "./PostRender";
+import Post from "./Post";
+import Comment from "./Comment";
 
 import "./Profile.css";
-
-class PostRender extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.handleLike = this.handleLike.bind(this);
-        this.handleComment = this.handleComment.bind(this);
-        this.flipSeeComments = this.flipSeeComments.bind(this);
-
-        this.state = {
-            post: props.post,
-            comments: props.comments,
-            student_first_name: props.student_first_name,
-            student_last_name: props.student_last_name,
-            student_username: props.student_username,
-            student_id: props.student_id,
-            seeComments: false
-        }
-    }
-
-    flipSeeComments(e) {
-        this.setState({
-            seeComments: !this.state.seeComments
-        })
-    }
-
-    getComment(comment) {
-        return(
-            <InputGroup className="p-1">
-                <InputGroup.Text className="w-25 justify-content-md-center">
-                {comment.student_first_name}
-                {comment.student_last_name}
-                </InputGroup.Text>
-                <Form.Control as="textarea"
-                            className="text-center"
-                            size="sm"
-                            rows={1}
-                            value={comment.comment.comment_content}>
-                </Form.Control>
-            </InputGroup>
-            // <ListGroup.Item>
-            //     <p className="h6">{comment.student_username}</p>
-            //     <p className="h5">{comment.comment.comment_content}</p>
-            // </ListGroup.Item>
-        )
-    }
-
-    getComments() {
-        if (this.state.seeComments === false) return
-
-        var comments = []
-        for (var i = 0; i < this.state.comments.length; i++) {
-            comments[i] = this.getComment(this.state.comments[i])
-        }
-        return (
-            <div>
-                <div class="row mh-150 overflow-auto p-2">
-                    {comments}
-                </div>
-                <form onSubmit={this.handleComment}>
-                <InputGroup>
-                    <FormControl type="text"
-                                placeholder="Add a comment"
-                                name="comment_content"
-                                size="sm">
-                    </FormControl>
-                    <Button variant="dark" type="submit">
-                        +
-                    </Button>
-                </InputGroup>
-                </form>
-            </div>
-        )
-    }
-
-    handleLike() {
-        postRequest('/like', {
-            post_id: this.state.post.id,
-            likes: this.state.post.likes + 1
-        }).then(data => {
-            if (data.success === false) return
-            this.setState({ post: data.result })
-        })
-    }
-
-    handleComment(e) {
-        e.preventDefault()
-
-        if (e.target.comment_content.value == "") return
-
-        postRequest('/comment', {
-            post_id: this.state.post.id,
-            comment_content: e.target.comment_content.value,
-            student_id: this.state.student_id
-        }).then(data => {
-            if (data.success === false) return
-
-            var comments = this.state.comments
-            comments[comments.length] = new Comment(
-                data.result,
-                this.state.student_first_name,
-                this.state.student_last_name,
-                this.state.student_username)
-
-            e.target.comment_content.value = ""
-
-            this.setState({ comments: comments })
-        })
-
-    }
-
-    render() {
-        var d = new Date(this.state.post.post_time)
-        return (
-            <div class="row">
-                <div class="row p-1">
-                <div class="col">
-                <InputGroup>
-                    <InputGroup.Text className="w-25 justify-content-md-center">
-                        {this.state.student_first_name}
-                        {this.state.student_last_name}
-                        <br></br>
-                        {d.toLocaleString()}
-                    </InputGroup.Text>
-                    <Form.Control as="textarea"
-                    value={this.state.post.post_content}
-                    className="text-center mr-10"
-                    rows={3}
-                    readonly/>
-                    <ButtonGroup vertical>
-                        <Button variant="outline-dark"
-                            size="sm"
-                            onClick={this.flipSeeComments}>
-                            Comment
-                        </Button>
-                        <ButtonGroup className="h-45">
-                        <Button variant="outline-dark"
-                            size="sm" disabled>
-                            {this.state.post.likes}
-                        </Button>
-                        <Button variant="outline-dark"
-                            size="sm"
-                            onClick={this.handleLike}>
-                            🖤
-                        </Button>
-                        </ButtonGroup>
-                    </ButtonGroup>
-                </InputGroup>
-                </div>
-                </div>
-                <div class="row justify-content-md-center">
-                    <div class="col-11">
-
-                    {this.getComments()}
-                    </div>
-                </div>
-            </div>
-        )
-    }
-}
- 
-class Post {
-    constructor(post, student_first_name = "", student_last_name = "", student_username = "") {
-        this.post = post
-        this.comments = []
-        this.student_first_name = student_first_name
-        this.student_last_name = student_last_name
-        this.student_username = student_username
-        this.student_id = 0
-    }
-
-    setStudent(student) {
-        this.student_first_name = student.first_name
-        this.student_last_name = student.last_name
-        this.student_username = student.username
-        this.student_id = student.id
-    }
-}
-
-class Comment {
-    constructor(comment, student_first_name = "", student_last_name = "", student_username = "") {
-        this.comment = comment
-        this.student_first_name = student_first_name
-        this.student_last_name = student_last_name
-        this.student_username = student_username
-    }
-
-    setStudent(student) {
-        this.student_first_name = student.first_name
-        this.student_last_name = student.last_name
-        this.student_username = student.username
-    }
-}
 
 class Section extends React.Component {
     constructor(props) {
@@ -295,13 +100,15 @@ class Section extends React.Component {
 
     getPost(post, i) {
         return(<PostRender
-            post={post.post}
-            comments={post.comments}
-            student_first_name={post.student_first_name}
-            student_last_name={post.student_last_name}
-            student_username={post.student_username}
-            student_id={post.student_id}
-            key={i}
+                post={post.post}
+                comments={post.comments}
+                student_first_name={post.student_first_name}
+                student_last_name={post.student_last_name}
+                student_username={post.student_username}
+                student_id={post.student_id}
+                section_name={post.section_name}
+                section_code={post.section_code}
+                key={i}
             />)
     }
 

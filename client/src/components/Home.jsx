@@ -5,6 +5,10 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import postRequest from "./PostRequest"
 import Card from 'react-bootstrap/Card'
+import PostRender from "./PostRender";
+import Post from "./Post";
+import Comment from "./Comment";
+
 import "./Profile.css"
 
 class Home extends React.Component {
@@ -21,15 +25,46 @@ class Home extends React.Component {
                 return
             }
 
-            console.log(data.sections)
-            console.log(data.my_username)
-            console.log(data.posts)
-            console.log(data.comments)
+            var new_posts = []
+
+            // get posts with their posters and their section
+            for (var i = 0; i < data.posts.length; i++) {
+                new_posts[i] = new Post(data.posts[i])
+
+                for(var j = 0; j < data.posters.length; j++) {
+                    if (data.posters[j].id == data.posts[i].student_id) {
+                        new_posts[i].setStudent(data.posters[j])
+                        break
+                    }
+                }
+
+                for(var j = 0; j < data.sections.length; j++) {
+                    if(data.sections[j].id == data.posts[i].section_id) {
+                        new_posts[i].setSection(data.sections[j])
+                        break
+                    }
+                }
+
+                for(var j = 0; j < data.comments.length; j++) {
+                    if (data.comments[j].post_id == data.posts[i].id) {
+                        var comment = new Comment(data.comments[j])
+    
+                        // find student that wrote that comment
+                        for(var k = 0; k < data.commenters.length; k++) {
+                            if (data.commenters[k].id == data.comments[j].student_id) {
+                                comment.setStudent(data.commenters[k])
+                                break
+                            }
+                        }
+    
+                        new_posts[i].comments.push(comment)
+                    }
+                }
+            }
 
             this.setState({
                 sections: data.sections,
-                posts: data.posts,
-                comments: data.comments,
+                posts: new_posts,
                 my_username: data.my_username
             })
         })
@@ -75,6 +110,20 @@ class Home extends React.Component {
         )
     }
 
+    getPost(post, i) {
+        return(<PostRender
+            post={post.post}
+            comments={post.comments}
+            student_first_name={post.student_first_name}
+            student_last_name={post.student_last_name}
+            student_username={post.student_username}
+            student_id={post.student_id}
+            section_name={post.section_name}
+            section_code={post.section_code}
+            key={i}
+        />)
+    }
+
     getPosts() {
         if (!this.state.posts) return
         if (this.state.posts.length == 0) {
@@ -82,12 +131,20 @@ class Home extends React.Component {
                 <h6>No posts to display :(</h6>
             )
         }
+
+        var new_posts = []
+
+        for(var i = 0; i < this.state.posts.length; i++) {
+            new_posts[this.state.posts.length - 1 - i] = this.getPost(this.state.posts[i], i)
+        }
+
+        return new_posts
     }
 
     renderPosts() {
         return(
             <div class="col h-100 overflow-auto">
-                <div class="row h-75 overflow-auto">
+                <div class="row h-90 overflow-auto">
                     <div class="col">
                         {this.getPosts()}
                     </div>

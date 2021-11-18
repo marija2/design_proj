@@ -37,9 +37,10 @@ class Login extends React.Component{
       ).then(data => {
         console.log(data)
         if (data.success === true) {
-          var path = generatePath("/profile/:username", { username: data.result.username })
+          // var path = generatePath("/profile/:username", { username: data.result.username })
+
           // will be changed to home page, just need to create profile page first
-          this.setState({ redirect: path });
+          this.setState({ redirect: "/" });
         } else {
           e.target.email.value = ""
           e.target.password.value = ""
