@@ -2,6 +2,14 @@
     margin-top: 50px;
 }
 
+.mt-60 {
+    margin-top:60px;
+}
+
+.ml-50p {
+    margin-left: 30%;
+}
+
 .mlr-300 {
     margin-left: 300px;
     margin-right: 300px;
@@ -32,6 +40,10 @@
 
 .h-30 {
     height: 30%;
+}
+
+.on-top {
+    z-index: 2000;
 }
 
 .h-20 {

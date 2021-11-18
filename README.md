@@ -63,4 +63,4 @@ Assuming you have installed Redis:
 2. Add the following line to the terminal and press enter:
 ```
 redis-server &
-```
+``

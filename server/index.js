@@ -1,4 +1,3 @@
-// import getSection from 'section.js'
 var pg = require('pg')
 var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
 var pgClient = new pg.Client(connectionString);
@@ -106,8 +105,6 @@ app.get('/',(req,res) => {
 });
 
 app.post('/home', (req, res) => {
-  console.log(req.session.username)
-
   if (!req.session.username) {
     res.json({ success: true, session: false })
     return
@@ -712,6 +709,35 @@ app.post('/post', (req, res) => {
         student: student.rows[0]
       })
 
+    })
+  })
+})
+
+app.post('/search', (req, res) => {
+  text = 'SELECT username, first_name, last_name FROM student WHERE first_name LIKE $1 OR last_name LIKE $1 OR username LIKE $1'
+  values = ['%' + req.body.search + '%']
+
+  pgClient.query(text, values, (err, students) => {
+    if ( err) {
+      console.log(err.stack)
+      res.json({ success: false })
+      return
+    }
+
+    text = 'SELECT code, section_name FROM sections WHERE section_name LIKE $1 OR code LIKE $1'
+
+    pgClient.query(text, values, (err, sections) => {
+      if ( err) {
+        console.log(err.stack)
+        res.json({ success: false })
+        return
+      }
+
+      res.json({
+        success: true,
+        students: students.rows,
+        sections: sections.rows
+      })
     })
   })
 })

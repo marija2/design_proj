@@ -14,7 +14,6 @@ class AdminLogout extends React.Component{
     super(props)
     this.state = { redirect: false }
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleHome = this.handleHome.bind(this);
   }
 
   handleSubmit(e) {
@@ -30,12 +29,6 @@ class AdminLogout extends React.Component{
     })
   }
 
-
-  handleHome(e) {
-    e.preventDefault();
-    this.setState({ redirect: "/admin/profile" })
-  }
-
   render() {
     if (this.state.redirect) { return <Redirect to={this.state.redirect} /> }
     return (
@@ -45,7 +38,6 @@ class AdminLogout extends React.Component{
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                    <Nav.Link href="/admin/profile">Profile</Nav.Link>
                     </Nav>
                     <Nav>
                     <Nav.Link href="/admin/logout">Log out</Nav.Link>
@@ -63,9 +55,6 @@ class AdminLogout extends React.Component{
                 </form>
               </div>
               <div>
-                <form onSubmit={this.handleHome}>
-                  <Button type="submit" variant="secondary"> Profile page </Button>
-                </form>
               </div>
             </div>
           </div>

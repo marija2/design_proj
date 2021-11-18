@@ -8,20 +8,28 @@ import Card from 'react-bootstrap/Card'
 import PostRender from "./PostRender";
 import Post from "./Post";
 import Comment from "./Comment";
+import FormControl from 'react-bootstrap/FormControl'
+import InputGroup from 'react-bootstrap/InputGroup'
+import NavDropdown from 'react-bootstrap/NavDropdown'
+
+import { FaSearch } from 'react-icons/fa'
 
 import "./Profile.css"
 
 class Home extends React.Component {
     constructor(props){
         super(props)
+
         this.state = { redirect: false }
 
         postRequest('/home', {}
         ).then(data => {
-            if (data.success === false) return
+            if (data.success === false) {
+                return
+            }
 
             if (data.session === false ){
-                this.state = { redirect: "/login" }
+                this.setState({ redirect: "/login" })
                 return
             }
 
@@ -97,15 +105,38 @@ class Home extends React.Component {
         return sections
     }
 
+    checkIfSearching() {
+        if (!this.state.search_results || this.state.search_results.length == 0) {
+            return (
+                <div>
+                    <h5>Sections</h5>
+                    <div class="row h-75 overflow-auto">
+                        <div class="col">
+                            {this.getSections()}
+                        </div>
+                    </div>
+                </div>
+            )
+        } else {
+            return this.renderSearchResults()
+        }
+    }
+
     renderSections() {
         return(
             <div class="col-3 h-100 overflow-auto">
-                <h5>Sections</h5>
-                <div class="row h-75 overflow-auto">
-                    <div class="col">
-                        {this.getSections()}
-                    </div>
-                </div>
+                <InputGroup className="pb-3">
+                    <InputGroup.Text>
+                        <FaSearch/>
+                    </InputGroup.Text>
+                <FormControl placeholder="Search from all students and sections"
+                    name="search_val"
+                    className="text-center"
+                    size="sm"
+                    onChange={this.handleSearch.bind(this)}>
+                </FormControl>
+                </InputGroup>
+                {this.checkIfSearching()}
             </div>
         )
     }
@@ -153,34 +184,111 @@ class Home extends React.Component {
         )
     }
 
+    handleSearch(e) {
+
+        if (e.target.value == "") {
+            this.setState({ search_results: [] })
+            return
+        }
+
+        postRequest('/search', {
+            search: e.target.value
+        }).then(data => {
+            if (data.success === false) return
+            this.setState({ search_results: data })
+        })
+    }
+
+    getStudentResult(result) {
+        return (
+            <Card className="text-dark m-1 w-100">
+                <Card.Body className="h6 m-0 p-2">
+                    < a href={`/profile/${result.username}`} class="text-dark text-decoration-none">
+                        {result.first_name} {" "} {result.last_name}
+                    </a>
+                </Card.Body>
+            </Card>
+        )
+    }
+
+    getSectionResult(result) {
+        return (
+            <Card className="text-dark m-1 w-100">
+                <Card.Body className="h6 m-0 p-2">
+                    < a href={`/section/${result.code}`} class="text-dark text-decoration-none">
+                        {result.section_name}
+                    </a>
+                </Card.Body>
+            </Card>
+        )
+    }
+
+    getStudentTitle() {
+        if ( this.state.search_results.students.length == 0 ) return
+        return (<h5>Students</h5>)
+    }
+
+    getSectionTitle() {
+        if ( this.state.search_results.sections.length == 0 ) return
+        return (<h5>Sections</h5>)
+    }
+
+    renderSearchResults() {
+
+        var students = []
+
+        for(var i = 0; i < this.state.search_results.students.length; i++) {
+            students[i] = this.getStudentResult(this.state.search_results.students[i])
+        }
+
+        var sections = []
+
+        for(var i = 0; i < this.state.search_results.sections.length; i++) {
+            sections[i] = this.getSectionResult(this.state.search_results.sections[i])
+        }
+
+        return(
+            <div className="w-100">
+                {this.getStudentTitle()}
+                <div className="row mh-50 overflow-auto">
+                    {students}
+                </div>
+                {this.getSectionTitle()}
+                <div className="row mh-50 overflow-auto">
+                    {sections}
+                </div>
+            </div>
+        )
+    }
+
     render() {
         if (this.state.redirect) {
             return <Redirect to={this.state.redirect} />
         }
         return (
-        <div className="w-100 h-100 bg-light text-dark fs-5">
-            <Navbar bg="light" expand="lg" fixed="top">
-                <Container>
-                    <Navbar.Brand href="/">Home</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                        <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
-                        <Nav.Link href="/">Messages</Nav.Link>
-                        </Nav>
-                        <Nav>
-                        <Nav.Link href="/logout">Log out</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
-            <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
-                <div class="row h-100">
-                    {this.renderSections()}
-                    {this.renderPosts()}
+            <div className="w-100 h-100 bg-light text-dark fs-5">
+                <Navbar bg="light" expand="lg" fixed="top">
+                    <Container>
+                        <Navbar.Brand href="/">Home</Navbar.Brand>
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="me-auto">
+                            <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
+                            <Nav.Link href="/">Messages</Nav.Link>
+                            </Nav>
+                            <Nav>
+                            <Nav.Link href="/logout">Log out</Nav.Link>
+                            </Nav>
+                        </Navbar.Collapse>
+                    </Container>
+                </Navbar>
+                <div className="w-100 mt-60 p-5 h-100 fixed-top bg-light text-dark">
+                    <div class="row h-100">
+                        {this.renderSections()}
+                        {this.renderPosts()}
+                    </div>
                 </div>
             </div>
-          </div>
         )
     }
 }

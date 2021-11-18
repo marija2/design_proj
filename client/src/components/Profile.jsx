@@ -9,7 +9,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import postRequest from "./PostRequest"
 import Card from 'react-bootstrap/Card';
-
+import { FaSearch } from 'react-icons/fa'
 import "./Profile.css";
 
 class Profile extends React.Component{
@@ -406,6 +406,83 @@ class Profile extends React.Component{
       )
     }
 
+    handleSearch(e) {
+
+      if (e.target.value == "") {
+          this.setState({ search_results: [] })
+          return
+      }
+
+      postRequest('/search', {
+          search: e.target.value
+      }).then(data => {
+          if (data.success === false) return
+          this.setState({ search_results: data })
+      })
+  }
+
+  getStudentResult(result) {
+      return (
+          <Card className="text-dark m-1 w-100">
+              <Card.Body className="h6 m-0 p-2">
+                  < a href={`/profile/${result.username}`} class="text-dark text-decoration-none">
+                      {result.first_name} {" "} {result.last_name}
+                  </a>
+              </Card.Body>
+          </Card>
+      )
+  }
+
+  getSectionResult(result) {
+      return (
+          <Card className="text-dark m-1 w-100">
+              <Card.Body className="h6 m-0 p-2">
+                  < a href={`/section/${result.code}`} class="text-dark text-decoration-none">
+                      {result.section_name}
+                  </a>
+              </Card.Body>
+          </Card>
+      )
+  }
+
+  getStudentTitle() {
+      if ( this.state.search_results.students.length == 0 ) return
+      return (<h5>Students</h5>)
+  }
+
+  getSectionTitle() {
+      if ( this.state.search_results.sections.length == 0 ) return
+      return (<h5>Sections</h5>)
+  }
+
+  renderSearchResults() {
+
+      var students = []
+
+      for(var i = 0; i < this.state.search_results.students.length; i++) {
+          students[i] = this.getStudentResult(this.state.search_results.students[i])
+      }
+
+      var sections = []
+
+      for(var i = 0; i < this.state.search_results.sections.length; i++) {
+          sections[i] = this.getSectionResult(this.state.search_results.sections[i])
+      }
+
+      return(
+          <div className="w-100">
+              {this.getStudentTitle()}
+              <div className="row mh-50 overflow-auto">
+                  {students}
+              </div>
+              {this.getSectionTitle()}
+              <div className="row mh-50 overflow-auto">
+                  {sections}
+              </div>
+          </div>
+      )
+  }
+
     renderProfileInfo() {
       if (this.state.edit === true) {
         return (
@@ -431,6 +508,25 @@ class Profile extends React.Component{
       }
     }
 
+    checkIfSearching() {
+      if (!this.state.search_results || this.state.search_results.length == 0) {
+          return (
+            <div>
+              <h5> Sections </h5>
+              <div className="row h-40 overflow-auto">
+                {this.getSections()}
+              </div>
+              <h5> Friends </h5>
+              <div className="row h-40 overflow-auto">
+                {this.getFriends()}
+              </div>
+            </div>
+          )
+      } else {
+          return this.renderSearchResults()
+      }
+  }
+
     renderProfile() {
       return (
         <div className="w-100 h-100 bg-light text-dark fs-5">
@@ -438,16 +534,20 @@ class Profile extends React.Component{
           <div className="w-100 mt-50 p-5 h-100 fixed-top bg-light text-dark">
             <div className="row h-100">
               <div className="col-5 h-100">
-                <h5> Sections </h5>
-                <div className="row h-40 overflow-auto">
-                  {this.getSections()}
-                </div>
-                <h5> Friends </h5>
-                <div className="row h-40 overflow-auto">
-                  {this.getFriends()}
-                </div>
+              <InputGroup className="pb-3">
+                    <InputGroup.Text>
+                        <FaSearch/>
+                    </InputGroup.Text>
+                <FormControl placeholder="Search from all students and sections..."
+                    name="search_val"
+                    className="text-center"
+                    size="sm"
+                    onChange={this.handleSearch.bind(this)}>
+                </FormControl>
+                </InputGroup>
+                {this.checkIfSearching()}
               </div>
-              <div className="col h-50">
+              <div className="col h-70">
                 {this.renderProfileInfo()}
               </div>
             </div>
