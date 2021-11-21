@@ -774,8 +774,7 @@ app.post('/messages', (req, res) => {
 })
 
 app.get('/*', (req, res) => {
-  console.log("i was in app.get *")
-  res.sendFile(path.resolve(__dirname, '../client/public', 'index.html'));
+  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
 
 app.listen(port)
