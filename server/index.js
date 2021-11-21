@@ -23,12 +23,12 @@ var port = process.env.PORT || 3001
 
 app.use(express.static(path.resolve(__dirname, '../client/public')));
 
-app.use(session({
-  secret: 'ssshhhhh',
-  store: new redisStore({ host: '127.0.0.1', port: 3001, client: client,ttl : 260}),
-  saveUninitialized: false,
-  resave: false
-}));
+// app.use(session({
+//   secret: 'ssshhhhh',
+//   store: new redisStore({ host: '127.0.0.1', port: 3001, client: client,ttl : 260}),
+//   saveUninitialized: false,
+//   resave: false
+// }));
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
