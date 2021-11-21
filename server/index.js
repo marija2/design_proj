@@ -3,7 +3,7 @@ var path = require('path')
 // var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
 // var connectionString = process.env.DATABASE_URL
 
-var pgClient = new Client({
+var pgClient = new pg.Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
