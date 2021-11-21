@@ -1,7 +1,7 @@
 var pg = require('pg')
 var path = require('path')
-var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
-// var connectionString = process.env.DATABASE_URL
+// var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
+var connectionString = process.env.DATABASE_URL
 var pgClient = new pg.Client(connectionString);
 pgClient.connect();
 var express = require('express')
