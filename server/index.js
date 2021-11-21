@@ -70,8 +70,6 @@ app.post('/addClass', (req, res) => {
   executeQuery(text, values, res);
 });
 
-app.get('/admin/login',(req,res) => {})
-
 app.post('/admin/login',(req,res) => {
   // check if user with this email and password exists
   text = 'SELECT * FROM admin WHERE email = $1 AND password = $2'
