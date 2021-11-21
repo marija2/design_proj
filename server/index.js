@@ -93,7 +93,7 @@ app.post('/login',(req,res) => {
   text = 'SELECT id, username FROM student WHERE (email = $1 AND password = $2) OR (username = $1 AND password = $2)'
   values = [req.body.email, req.body.password]
 
-  console.log(req.session.username)
+  // console.log(req.session.username)
 
   pgClient.query(text, values, (err, student) => {
     if (err) console.log(err.stack)
@@ -103,8 +103,8 @@ app.post('/login',(req,res) => {
       return
     }
 
-    req.session.username = student.rows[0].username
-    req.session.my_id = student.rows[0].id
+    // req.session.username = student.rows[0].username
+    // req.session.my_id = student.rows[0].id
     res.json({ success: true, result: student.rows[0] })
   }) 
 });
@@ -116,10 +116,10 @@ app.get('/',(req,res) => {
 });
 
 app.post('/home', (req, res) => {
-  if (!req.session.username) {
-    res.json({ success: true, session: false })
-    return
-  }
+  // if (!req.session.username) {
+  //   res.json({ success: true, session: false })
+  //   return
+  // }
   
   // get all posts from all sections this student is taking
 
