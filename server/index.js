@@ -14,9 +14,9 @@ var pgClient = new pg.Client(process.env.DATABASE_URL)//{
 pgClient.connect();
 var express = require('express')
 var session = require('express-session')
-const redis = require('redis');
-const redisStore = require('connect-redis')(session);
-const client  = redis.createClient();
+// const redis = require('redis');
+// const redisStore = require('connect-redis')(session);
+// const client  = redis.createClient();
 const bodyParser = require("body-parser")
 var app = express()
 var port = process.env.PORT || 3001
