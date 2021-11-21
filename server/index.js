@@ -4,7 +4,7 @@ var path = require('path')
 // var connectionString = process.env.DATABASE_URL
 
 var pgClient = new pg.Client({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || "postgres://newuser:password@127.0.0.1:5432/postgres",
   ssl: {
     require: true,
     rejectUnauthorized: false
@@ -772,6 +772,7 @@ app.post('/messages', (req, res) => {
 })
 
 app.get('*', (req, res) => {
+  console.log("i was in app.get *")
   res.sendFile(path.resolve(__dirname, '../client/public', 'index.html'));
 });
 
