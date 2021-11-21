@@ -1,4 +1,5 @@
 var pg = require('pg')
+var path = require('path')
 var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
 var pgClient = new pg.Client(connectionString);
 pgClient.connect();
@@ -10,6 +11,8 @@ const client  = redis.createClient();
 const bodyParser = require("body-parser")
 var app = express()
 var port = process.env.PORT || 3001
+
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app.use(session({
   secret: 'ssshhhhh',
@@ -756,5 +759,9 @@ app.post('/messages', (req, res) => {
     res.json({ success: true, result: msgs.rows })
   })
 })
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+});
 
 app.listen(port)
