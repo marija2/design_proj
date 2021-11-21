@@ -111,10 +111,11 @@ app.post('/login',(req,res) => {
   }) 
 });
 
-// app.get('/',(req,res) => {
-//   if(req.session.username) res.json({ success: true })
-//   else res.json({ success: false })
-// });
+app.get('/',(req,res) => {
+  console.log("doing nothing")
+  // if(req.session.username) res.json({ success: true })
+  // else res.json({ success: false })
+});
 
 app.post('/home', (req, res) => {
   if (!req.session.username) {
