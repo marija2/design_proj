@@ -21,7 +21,7 @@ const bodyParser = require("body-parser")
 var app = express()
 var port = process.env.PORT || 3001
 
-app.use(express.static(path.resolve(__dirname, '../client/public')));
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 // app.use(session({
 //   secret: 'ssshhhhh',
@@ -111,10 +111,10 @@ app.post('/login',(req,res) => {
   }) 
 });
 
-app.get('/',(req,res) => {
-  if(req.session.username) res.json({ success: true })
-  else res.json({ success: false })
-});
+// app.get('/',(req,res) => {
+//   if(req.session.username) res.json({ success: true })
+//   else res.json({ success: false })
+// });
 
 app.post('/home', (req, res) => {
   if (!req.session.username) {
@@ -770,7 +770,7 @@ app.post('/messages', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/public', 'index.html'));
+  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
 
 app.listen(port)
