@@ -1,8 +1,16 @@
 var pg = require('pg')
 var path = require('path')
 // var connectionString = "postgres://newuser:password@127.0.0.1:5432/postgres";
-var connectionString = process.env.DATABASE_URL
-var pgClient = new pg.Client(connectionString);
+// var connectionString = process.env.DATABASE_URL
+
+var pgClient = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+// var pgClient = new pg.Client(connectionString);
 pgClient.connect();
 var express = require('express')
 var session = require('express-session')
@@ -13,7 +21,7 @@ const bodyParser = require("body-parser")
 var app = express()
 var port = process.env.PORT || 3001
 
-app.use(express.static(path.resolve(__dirname, '../client')));
+app.use(express.static(path.resolve(__dirname, '../client/public')));
 
 app.use(session({
   secret: 'ssshhhhh',

@@ -1,0 +1,1186 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.1
+-- Dumped by pg_dump version 14.1
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: admin; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.admin (
+    id integer NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.admin OWNER TO newuser;
+
+--
+-- Name: admin_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.admin_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.admin_id_seq OWNER TO newuser;
+
+--
+-- Name: admin_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.admin_id_seq OWNED BY public.admin.id;
+
+
+--
+-- Name: classes; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.classes (
+    id integer NOT NULL,
+    class_name character varying,
+    code character varying
+);
+
+
+ALTER TABLE public.classes OWNER TO newuser;
+
+--
+-- Name: classes_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.classes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.classes_id_seq OWNER TO newuser;
+
+--
+-- Name: classes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.classes_id_seq OWNED BY public.classes.id;
+
+
+--
+-- Name: friends; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.friends (
+    id integer NOT NULL,
+    friend1 integer NOT NULL,
+    friend2 integer NOT NULL
+);
+
+
+ALTER TABLE public.friends OWNER TO newuser;
+
+--
+-- Name: friends_friend1_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.friends_friend1_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.friends_friend1_seq OWNER TO newuser;
+
+--
+-- Name: friends_friend1_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.friends_friend1_seq OWNED BY public.friends.friend1;
+
+
+--
+-- Name: friends_friend2_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.friends_friend2_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.friends_friend2_seq OWNER TO newuser;
+
+--
+-- Name: friends_friend2_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.friends_friend2_seq OWNED BY public.friends.friend2;
+
+
+--
+-- Name: friends_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.friends_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.friends_id_seq OWNER TO newuser;
+
+--
+-- Name: friends_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.friends_id_seq OWNED BY public.friends.id;
+
+
+--
+-- Name: msgs; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.msgs (
+    msg_content character varying,
+    msg_time timestamp without time zone,
+    sender integer NOT NULL,
+    receiver integer NOT NULL
+);
+
+
+ALTER TABLE public.msgs OWNER TO newuser;
+
+--
+-- Name: msgs_stud1_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.msgs_stud1_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.msgs_stud1_id_seq OWNER TO newuser;
+
+--
+-- Name: msgs_stud1_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.msgs_stud1_id_seq OWNED BY public.msgs.sender;
+
+
+--
+-- Name: msgs_stud2_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.msgs_stud2_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.msgs_stud2_id_seq OWNER TO newuser;
+
+--
+-- Name: msgs_stud2_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.msgs_stud2_id_seq OWNED BY public.msgs.receiver;
+
+
+--
+-- Name: post_comments; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.post_comments (
+    id integer NOT NULL,
+    comment_content character varying(255),
+    comment_time timestamp without time zone,
+    post_id integer NOT NULL,
+    student_id integer NOT NULL
+);
+
+
+ALTER TABLE public.post_comments OWNER TO newuser;
+
+--
+-- Name: post_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.post_comments_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.post_comments_id_seq OWNER TO newuser;
+
+--
+-- Name: post_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.post_comments_id_seq OWNED BY public.post_comments.id;
+
+
+--
+-- Name: post_comments_post_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.post_comments_post_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.post_comments_post_id_seq OWNER TO newuser;
+
+--
+-- Name: post_comments_post_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.post_comments_post_id_seq OWNED BY public.post_comments.post_id;
+
+
+--
+-- Name: post_comments_student_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.post_comments_student_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.post_comments_student_id_seq OWNER TO newuser;
+
+--
+-- Name: post_comments_student_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.post_comments_student_id_seq OWNED BY public.post_comments.student_id;
+
+
+--
+-- Name: posts; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.posts (
+    id integer NOT NULL,
+    post_content character varying(255),
+    likes integer,
+    section_id integer NOT NULL,
+    student_id integer NOT NULL,
+    post_time timestamp without time zone
+);
+
+
+ALTER TABLE public.posts OWNER TO newuser;
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.posts_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.posts_id_seq OWNER TO newuser;
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
+
+
+--
+-- Name: posts_section_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.posts_section_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.posts_section_id_seq OWNER TO newuser;
+
+--
+-- Name: posts_section_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.posts_section_id_seq OWNED BY public.posts.section_id;
+
+
+--
+-- Name: posts_student_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.posts_student_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.posts_student_id_seq OWNER TO newuser;
+
+--
+-- Name: posts_student_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.posts_student_id_seq OWNED BY public.posts.student_id;
+
+
+--
+-- Name: section_student; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.section_student (
+    id integer NOT NULL,
+    section_id integer NOT NULL,
+    student_id integer NOT NULL
+);
+
+
+ALTER TABLE public.section_student OWNER TO newuser;
+
+--
+-- Name: section_student_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.section_student_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.section_student_id_seq OWNER TO newuser;
+
+--
+-- Name: section_student_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.section_student_id_seq OWNED BY public.section_student.id;
+
+
+--
+-- Name: section_student_section_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.section_student_section_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.section_student_section_id_seq OWNER TO newuser;
+
+--
+-- Name: section_student_section_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.section_student_section_id_seq OWNED BY public.section_student.section_id;
+
+
+--
+-- Name: section_student_student_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.section_student_student_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.section_student_student_id_seq OWNER TO newuser;
+
+--
+-- Name: section_student_student_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.section_student_student_id_seq OWNED BY public.section_student.student_id;
+
+
+--
+-- Name: sections; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.sections (
+    id integer NOT NULL,
+    section_name character varying(255),
+    professor character varying(255),
+    section_time time without time zone,
+    code character varying(255),
+    semester character varying(255),
+    cohort character varying(255),
+    class_id integer NOT NULL
+);
+
+
+ALTER TABLE public.sections OWNER TO newuser;
+
+--
+-- Name: sections_class_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.sections_class_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sections_class_id_seq OWNER TO newuser;
+
+--
+-- Name: sections_class_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.sections_class_id_seq OWNED BY public.sections.class_id;
+
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.sections_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sections_id_seq OWNER TO newuser;
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.sections_id_seq OWNED BY public.sections.id;
+
+
+--
+-- Name: student; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.student (
+    id integer NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    first_name character varying(255),
+    last_name character varying(255),
+    preferred_name character varying(255),
+    pronouns character varying(255),
+    university character varying(255),
+    academic_year character varying(255),
+    major character varying(255),
+    username character varying(255),
+    profile_photo bytea
+);
+
+
+ALTER TABLE public.student OWNER TO newuser;
+
+--
+-- Name: student_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.student_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.student_id_seq OWNER TO newuser;
+
+--
+-- Name: student_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.student_id_seq OWNED BY public.student.id;
+
+
+--
+-- Name: test; Type: TABLE; Schema: public; Owner: newuser
+--
+
+CREATE TABLE public.test (
+    id integer NOT NULL,
+    name character varying(256)
+);
+
+
+ALTER TABLE public.test OWNER TO newuser;
+
+--
+-- Name: test_id_seq; Type: SEQUENCE; Schema: public; Owner: newuser
+--
+
+CREATE SEQUENCE public.test_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.test_id_seq OWNER TO newuser;
+
+--
+-- Name: test_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: newuser
+--
+
+ALTER SEQUENCE public.test_id_seq OWNED BY public.test.id;
+
+
+--
+-- Name: admin id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.admin ALTER COLUMN id SET DEFAULT nextval('public.admin_id_seq'::regclass);
+
+
+--
+-- Name: classes id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.classes ALTER COLUMN id SET DEFAULT nextval('public.classes_id_seq'::regclass);
+
+
+--
+-- Name: friends id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.friends ALTER COLUMN id SET DEFAULT nextval('public.friends_id_seq'::regclass);
+
+
+--
+-- Name: friends friend1; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.friends ALTER COLUMN friend1 SET DEFAULT nextval('public.friends_friend1_seq'::regclass);
+
+
+--
+-- Name: friends friend2; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.friends ALTER COLUMN friend2 SET DEFAULT nextval('public.friends_friend2_seq'::regclass);
+
+
+--
+-- Name: msgs sender; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.msgs ALTER COLUMN sender SET DEFAULT nextval('public.msgs_stud1_id_seq'::regclass);
+
+
+--
+-- Name: msgs receiver; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.msgs ALTER COLUMN receiver SET DEFAULT nextval('public.msgs_stud2_id_seq'::regclass);
+
+
+--
+-- Name: post_comments id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.post_comments ALTER COLUMN id SET DEFAULT nextval('public.post_comments_id_seq'::regclass);
+
+
+--
+-- Name: post_comments post_id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.post_comments ALTER COLUMN post_id SET DEFAULT nextval('public.post_comments_post_id_seq'::regclass);
+
+
+--
+-- Name: post_comments student_id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.post_comments ALTER COLUMN student_id SET DEFAULT nextval('public.post_comments_student_id_seq'::regclass);
+
+
+--
+-- Name: posts id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN id SET DEFAULT nextval('public.posts_id_seq'::regclass);
+
+
+--
+-- Name: posts section_id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN section_id SET DEFAULT nextval('public.posts_section_id_seq'::regclass);
+
+
+--
+-- Name: posts student_id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN student_id SET DEFAULT nextval('public.posts_student_id_seq'::regclass);
+
+
+--
+-- Name: section_student id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.section_student ALTER COLUMN id SET DEFAULT nextval('public.section_student_id_seq'::regclass);
+
+
+--
+-- Name: section_student section_id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.section_student ALTER COLUMN section_id SET DEFAULT nextval('public.section_student_section_id_seq'::regclass);
+
+
+--
+-- Name: section_student student_id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.section_student ALTER COLUMN student_id SET DEFAULT nextval('public.section_student_student_id_seq'::regclass);
+
+
+--
+-- Name: sections id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.sections ALTER COLUMN id SET DEFAULT nextval('public.sections_id_seq'::regclass);
+
+
+--
+-- Name: sections class_id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.sections ALTER COLUMN class_id SET DEFAULT nextval('public.sections_class_id_seq'::regclass);
+
+
+--
+-- Name: student id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.student ALTER COLUMN id SET DEFAULT nextval('public.student_id_seq'::regclass);
+
+
+--
+-- Name: test id; Type: DEFAULT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.test ALTER COLUMN id SET DEFAULT nextval('public.test_id_seq'::regclass);
+
+
+--
+-- Data for Name: admin; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.admin (id, email, password) FROM stdin;
+1	mt3786@nyu.edu	password
+\.
+
+
+--
+-- Data for Name: classes; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.classes (id, class_name, code) FROM stdin;
+1	Object Oriented Programming	CS-UY 2124
+2	Parallel and Distributed Systems	CS-UY 3254
+3	Introduction to Machine Learning	CS-UY 4563
+4	Data Structures and Algorithms	CS-UY 1134
+\.
+
+
+--
+-- Data for Name: friends; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.friends (id, friend1, friend2) FROM stdin;
+7	1	3
+9	1	2
+\.
+
+
+--
+-- Data for Name: msgs; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.msgs (msg_content, msg_time, sender, receiver) FROM stdin;
+hi	2021-11-18 16:32:06.090604	1	2
+hey	2021-11-18 16:32:19.536258	2	1
+hello	2021-11-18 16:32:28.694651	1	3
+\.
+
+
+--
+-- Data for Name: post_comments; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.post_comments (id, comment_content, comment_time, post_id, student_id) FROM stdin;
+1	Tommorow	2021-11-06 21:19:43.309869	1	2
+7	it was due yesterday	2021-11-08 21:36:20.303586	1	1
+8	or was it....	2021-11-08 21:36:35.611945	1	1
+9	it was! :(	2021-11-08 21:43:25.944363	1	1
+10	im commenting	2021-11-16 22:03:07.921089	2	1
+11		2021-11-16 22:05:46.491026	2	1
+12	im commenting again	2021-11-16 22:05:55.830407	2	1
+13	hi	2021-11-16 22:13:19.49312	1	1
+17	hi	2021-11-16 22:23:38.998332	7	1
+18	im commenting on my fifth post	2021-11-16 22:23:54.220846	6	1
+19	hi my fourth post	2021-11-16 22:37:31.798959	5	1
+20	too soon	2021-11-17 22:05:20.477367	8	1
+\.
+
+
+--
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.posts (id, post_content, likes, section_id, student_id, post_time) FROM stdin;
+1	When is hw5 due?	2	1	1	2021-11-06 21:18:06.663344
+2	im posting	3	1	1	2021-11-15 22:58:14.132638
+3	im posting again...	0	1	1	2021-11-16 22:07:18.348115
+4	my third post	0	1	1	2021-11-16 22:10:18.898022
+5	my fourth post	0	1	1	2021-11-16 22:14:22.338053
+6	my fifth post	0	1	1	2021-11-16 22:19:32.558595
+7	my sixth post	0	1	1	2021-11-16 22:22:35.412971
+8	when do we have the second exam?	2	2	1	2021-11-16 22:27:22.582315
+\.
+
+
+--
+-- Data for Name: section_student; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.section_student (id, section_id, student_id) FROM stdin;
+1	1	1
+3	1	3
+5	1	2
+6	2	1
+\.
+
+
+--
+-- Data for Name: sections; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.sections (id, section_name, professor, section_time, code, semester, cohort, class_id) FROM stdin;
+1	CS-UY 2124 OOP	John Sterling	00:30:00	CS-UY-2124-F21-A	Fall 2021	A	1
+2	CS-UY 3254 DistSys	Jeff Epstein	12:00:00	CS-UY-3254-F21-A	Fall 2021	A	2
+3	CS-UY 4563 ML	Linda Sellie	11:00:00	CS-UY-4563-F21-A	Fall 2021	A	3
+\.
+
+
+--
+-- Data for Name: student; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.student (id, email, password, first_name, last_name, preferred_name, pronouns, university, academic_year, major, username, profile_photo) FROM stdin;
+2	timmy@gmail.com	password	Timothee	Chalamet	\N	\N	New York University	Senior	Acting	timothee	\N
+3	ari@gmail.com	password	Ariana	Grande	\N	\N	USC	Senior	Drama	ari	\N
+1	mt3786@nyu.edu	password	Marija	Trifkovic	Marija	She/Her	New York University	Senior sir	Computer Science	marijatrifkovic	\\x7b7d
+\.
+
+
+--
+-- Data for Name: test; Type: TABLE DATA; Schema: public; Owner: newuser
+--
+
+COPY public.test (id, name) FROM stdin;
+1	test_user
+2	test_user
+3	test_user
+\.
+
+
+--
+-- Name: admin_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.admin_id_seq', 1, true);
+
+
+--
+-- Name: classes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.classes_id_seq', 4, true);
+
+
+--
+-- Name: friends_friend1_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.friends_friend1_seq', 1, false);
+
+
+--
+-- Name: friends_friend2_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.friends_friend2_seq', 1, false);
+
+
+--
+-- Name: friends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.friends_id_seq', 9, true);
+
+
+--
+-- Name: msgs_stud1_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.msgs_stud1_id_seq', 1, false);
+
+
+--
+-- Name: msgs_stud2_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.msgs_stud2_id_seq', 1, false);
+
+
+--
+-- Name: post_comments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.post_comments_id_seq', 20, true);
+
+
+--
+-- Name: post_comments_post_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.post_comments_post_id_seq', 1, false);
+
+
+--
+-- Name: post_comments_student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.post_comments_student_id_seq', 1, false);
+
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.posts_id_seq', 8, true);
+
+
+--
+-- Name: posts_section_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.posts_section_id_seq', 1, false);
+
+
+--
+-- Name: posts_student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.posts_student_id_seq', 1, false);
+
+
+--
+-- Name: section_student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.section_student_id_seq', 6, true);
+
+
+--
+-- Name: section_student_section_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.section_student_section_id_seq', 1, false);
+
+
+--
+-- Name: section_student_student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.section_student_student_id_seq', 1, false);
+
+
+--
+-- Name: sections_class_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.sections_class_id_seq', 3, true);
+
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.sections_id_seq', 3, true);
+
+
+--
+-- Name: student_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.student_id_seq', 3, true);
+
+
+--
+-- Name: test_id_seq; Type: SEQUENCE SET; Schema: public; Owner: newuser
+--
+
+SELECT pg_catalog.setval('public.test_id_seq', 3, true);
+
+
+--
+-- Name: admin admin_email_key; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.admin
+    ADD CONSTRAINT admin_email_key UNIQUE (email);
+
+
+--
+-- Name: admin admin_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.admin
+    ADD CONSTRAINT admin_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: classes classes_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.classes
+    ADD CONSTRAINT classes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: friends friends_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: post_comments post_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.post_comments
+    ADD CONSTRAINT post_comments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: section_student section_student_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.section_student
+    ADD CONSTRAINT section_student_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sections sections_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.sections
+    ADD CONSTRAINT sections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: student student_email_key; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.student
+    ADD CONSTRAINT student_email_key UNIQUE (email);
+
+
+--
+-- Name: student student_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.student
+    ADD CONSTRAINT student_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: test test_pkey; Type: CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.test
+    ADD CONSTRAINT test_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: friends friends_friend1_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_friend1_fkey FOREIGN KEY (friend1) REFERENCES public.student(id);
+
+
+--
+-- Name: friends friends_friend2_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.friends
+    ADD CONSTRAINT friends_friend2_fkey FOREIGN KEY (friend2) REFERENCES public.student(id);
+
+
+--
+-- Name: msgs msgs_stud1_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.msgs
+    ADD CONSTRAINT msgs_stud1_id_fkey FOREIGN KEY (sender) REFERENCES public.student(id);
+
+
+--
+-- Name: msgs msgs_stud2_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.msgs
+    ADD CONSTRAINT msgs_stud2_id_fkey FOREIGN KEY (receiver) REFERENCES public.student(id);
+
+
+--
+-- Name: post_comments post_comments_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.post_comments
+    ADD CONSTRAINT post_comments_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id);
+
+
+--
+-- Name: post_comments post_comments_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.post_comments
+    ADD CONSTRAINT post_comments_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.student(id);
+
+
+--
+-- Name: posts posts_section_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_section_id_fkey FOREIGN KEY (section_id) REFERENCES public.sections(id);
+
+
+--
+-- Name: posts posts_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.student(id);
+
+
+--
+-- Name: section_student section_student_section_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.section_student
+    ADD CONSTRAINT section_student_section_id_fkey FOREIGN KEY (section_id) REFERENCES public.sections(id);
+
+
+--
+-- Name: section_student section_student_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: newuser
+--
+
+ALTER TABLE ONLY public.section_student
+    ADD CONSTRAINT section_student_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.student(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
