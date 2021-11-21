@@ -26,9 +26,9 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app.use(session({
   secret: 'ssshhhhh',
-  store: new redisStore({ host: '127.0.0.1', port: 3001, client: client,ttl : 260}),
-  saveUninitialized: false,
-  resave: false
+  store: new redisStore({url: process.env.REDIS_URL}),
+  saveUninitialized: true,
+  resave: true
 }));
 
 app.use(bodyParser.urlencoded({ extended: false }))
