@@ -41,7 +41,7 @@ class AdminProfile extends React.Component{
         university: e.target.university.value,
         academic_year: e.target.academic_year.value,
         major: e.target.major.value,
-        username: e.target.username.values
+        username: e.target.username.value
       }).then(data => {
         if (data.success === true) {
             e.target.student_email.value = ""
@@ -51,7 +51,7 @@ class AdminProfile extends React.Component{
             e.target.university.value = ""
             e.target.academic_year.value = ""
             e.target.major.value = ""
-            e.target.username.values = ""
+            e.target.username.value = ""
             this.setState({ addStudentStatus: "Successfully added a student" })
         } else {
             this.setState({ addStudentStatus: "Could not successfully add a student" })
