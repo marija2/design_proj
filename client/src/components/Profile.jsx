@@ -395,7 +395,6 @@ class Profile extends React.Component{
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
                 <Nav.Link href={`/profile/${this.state.my_username}`}>Profile</Nav.Link>
-                <Nav.Link href={`/messages/${this.state.my_username}`}>Messages</Nav.Link>
               </Nav>
               <Nav>
                 <Nav.Link href="/logout">Log out</Nav.Link>
