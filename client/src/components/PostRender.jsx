@@ -136,7 +136,7 @@ class PostRender extends React.Component {
                 <div class="row p-2">
                 <div class="col">
                 <InputGroup>
-                    <InputGroup.Text className="w-25 justify-content-md-center">
+                    <InputGroup.Text className="w-40 justify-content-md-center">
                         {this.getSection()}
                         {this.getNewLine()}
                         {this.state.student_first_name} {" "}
