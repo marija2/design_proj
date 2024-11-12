@@ -1,3 +1,8 @@
+## Software Engineering Fall 2021 Final
+
+This is a design for a social media platform "Cohort" that would be used by universities to enroll their students into groups based on their class rosters and would help students stay connected and be able to easily find all of the required course related information in one place. It's built on top of Node.js and PostgreSQL.
+
+## Instructions:
 ### To start server:
 
 1. Open **new** terminal window and go to the project directory
@@ -28,7 +33,8 @@ npm start
 ```
 If the client was started successfully you should see a similar message:
 
-![Client started](images/client_started.png)
+<img width="386" alt="client_started" src="https://github.com/user-attachments/assets/74dde2be-b23d-4044-9e0e-a21b27b1bdb5">
+
 
 #### To stop client:
 
