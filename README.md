@@ -13,7 +13,7 @@ npm start
 ```
 If the server was started successfully you should see a similar message:
 
-![Server started](images/server_started.png)
+<img width="809" alt="server_started" src="https://github.com/user-attachments/assets/0c9077d6-aa97-4a44-902a-292e301f9205">
 
 #### To stop server:
 
